@@ -18,7 +18,10 @@ import {
   DisputeRecord,
   RatingRecord,
   QualityConfirmationCheck,
-  TransportJob
+  TransportJob,
+  AuthClientType,
+  AuthPageView,
+  SessionSummary
 } from '../types';
 import {
   INITIAL_USERS,
@@ -42,6 +45,20 @@ interface AppContextType {
   switchRole: (role: UserRole) => void;
   updateUserProfile: (userId: string, data: Partial<User>) => void;
   registerUser: (user: Partial<User>) => User;
+
+  // Dedicated Client Auth Flow (Buyers, Transporters, Admin, Farmers)
+  isAuthScreenOpen: boolean;
+  setIsAuthScreenOpen: (open: boolean) => void;
+  authClient: AuthClientType;
+  setAuthClient: (client: AuthClientType) => void;
+  authPage: AuthPageView;
+  setAuthPage: (page: AuthPageView) => void;
+  sessionSummary: SessionSummary | null;
+  openAuth: (client?: AuthClientType, page?: AuthPageView) => void;
+  closeAuth: () => void;
+  logoutToExitPage: (reason?: string) => void;
+  loginWithCredentials: (emailOrPhone: string, password?: string, clientType?: AuthClientType) => boolean;
+  signupWithRoleData: (roleData: any, clientType: AuthClientType) => User;
 
   // Verification
   submitVerification: (userId: string, documents: VerificationDocument[]) => void;
@@ -227,6 +244,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>('req-201');
 
+  // Dedicated Client Auth Flow State (Buyers, Transporters, Admin, Farmers)
+  const [isAuthScreenOpen, setIsAuthScreenOpen] = useState<boolean>(false);
+  const [authClient, setAuthClient] = useState<AuthClientType>('BUYER');
+  const [authPage, setAuthPage] = useState<AuthPageView>('login');
+  const [sessionSummary, setSessionSummary] = useState<SessionSummary | null>(null);
+
   // Guided Walkthrough
   const [tourStep, setTourStep] = useState<number | null>(null);
 
@@ -343,6 +366,109 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUsers(prev => [...prev, newUser]);
     setCurrentUserId(newUser.id);
     showToast(`Welcome to FarmPot, ${newUser.name}!`, 'success');
+    return newUser;
+  };
+
+  const roleToAuthClient = (role: UserRole): AuthClientType => {
+    if (role === 'BUYER') return 'BUYER';
+    if (role === 'FARMER') return 'FARMER';
+    if (role === 'TRANSPORTER') return 'TRANSPORTER';
+    return 'ADMIN';
+  };
+
+  const openAuth = (client?: AuthClientType, page?: AuthPageView) => {
+    if (client) setAuthClient(client);
+    if (page) setAuthPage(page);
+    setIsAuthScreenOpen(true);
+  };
+
+  const closeAuth = () => {
+    setIsAuthScreenOpen(false);
+  };
+
+  const logoutToExitPage = (reason?: string) => {
+    const role = currentUser?.role || 'BUYER';
+    const clientType = roleToAuthClient(role);
+    const activeOrders = orders.filter(o =>
+      (o.buyerId === currentUser.id || o.supplierId === currentUser.id || o.logistics?.transporterId === currentUser.id) &&
+      !['SETTLED', 'CANCELLED', 'REFUNDED'].includes(o.status)
+    );
+    const totalEscrow = activeOrders.reduce((sum, o) => sum + (o.escrowAmountNGN || o.totalAmountNGN || 0), 0);
+
+    const summary: SessionSummary = {
+      userId: currentUser.id,
+      userName: currentUser.name,
+      businessName: currentUser.businessName,
+      role: currentUser.role,
+      clientType,
+      loginTime: new Date(Date.now() - 36 * 60 * 1000).toISOString(),
+      logoutTime: new Date().toISOString(),
+      durationMinutes: 36,
+      activeOrdersCount: activeOrders.length,
+      escrowProtectedAmountNGN: totalEscrow || currentUser.escrowBalance || 0,
+      walletBalanceNGN: currentUser.walletBalance || 0,
+      exitReason: reason || 'Secure Session Sign-Off',
+    };
+
+    setSessionSummary(summary);
+    setAuthClient(clientType);
+    setAuthPage('exit');
+    setIsAuthScreenOpen(true);
+    showToast(`Signed out safely from ${clientType.toLowerCase()} workspace`, 'info');
+  };
+
+  const loginWithCredentials = (emailOrPhone: string, _password?: string, clientType?: AuthClientType): boolean => {
+    const targetType = clientType || authClient;
+    const cleaned = (emailOrPhone || '').trim().toLowerCase();
+
+    // 1. Try finding by email or phone
+    let found = users.find(u =>
+      (u.email.toLowerCase() === cleaned || u.phone.replace(/\s+/g, '') === cleaned.replace(/\s+/g, '')) &&
+      (!targetType || roleToAuthClient(u.role) === targetType)
+    );
+
+    // 2. Try finding by name or business name within client type
+    if (!found && targetType && cleaned) {
+      found = users.find(u =>
+        roleToAuthClient(u.role) === targetType &&
+        (u.name.toLowerCase().includes(cleaned) || u.businessName?.toLowerCase().includes(cleaned))
+      );
+    }
+
+    // 3. Fallback to matching first user of clientType
+    if (!found && targetType) {
+      found = users.find(u => roleToAuthClient(u.role) === targetType);
+    }
+
+    if (!found) {
+      found = users[0];
+    }
+
+    if (found) {
+      setCurrentUserId(found.id);
+      setIsAuthScreenOpen(false);
+      setActiveView('dashboard');
+      showToast(`Welcome back, ${found.name}! Signed in to ${found.role} portal.`, 'success');
+      return true;
+    }
+
+    showToast('Invalid credentials provided.', 'error');
+    return false;
+  };
+
+  const signupWithRoleData = (roleData: any, clientType: AuthClientType): User => {
+    let role: UserRole = 'BUYER';
+    if (clientType === 'FARMER') role = 'FARMER';
+    if (clientType === 'TRANSPORTER') role = 'TRANSPORTER';
+    if (clientType === 'ADMIN') role = 'ADMIN';
+
+    const newUser = registerUser({
+      ...roleData,
+      role,
+    });
+
+    setIsAuthScreenOpen(false);
+    setActiveView('dashboard');
     return newUser;
   };
 
@@ -1562,6 +1688,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         switchRole,
         updateUserProfile,
         registerUser,
+        isAuthScreenOpen,
+        setIsAuthScreenOpen,
+        authClient,
+        setAuthClient,
+        authPage,
+        setAuthPage,
+        sessionSummary,
+        openAuth,
+        closeAuth,
+        logoutToExitPage,
+        loginWithCredentials,
+        signupWithRoleData,
         submitVerification,
         submitVerificationRequest,
         adminReviewVerification,

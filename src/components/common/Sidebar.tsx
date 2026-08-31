@@ -20,7 +20,9 @@ import {
   PhoneCall,
   Sliders,
   Sparkles,
-  Lock
+  Lock,
+  KeyRound,
+  LogOut
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -35,6 +37,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
     setActiveView,
     unreadNotificationsCount,
     featureFlags,
+    openAuth,
+    logoutToExitPage,
   } = useApp();
 
   const handleNav = (viewKey: string) => {
@@ -112,15 +116,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
     // ADMIN, VERIFICATION_OFFICER, OPERATIONS, FINANCE
     return [
       { key: 'dashboard', label: 'Control Tower', icon: <LayoutDashboard className="w-4 h-4" /> },
-      { key: 'admin-verification', label: 'Verification Queue', icon: <UserCheck className="w-4 h-4 text-purple-600" /> },
-      { key: 'admin-users', label: 'User Directory', icon: <Users className="w-4 h-4" /> },
-      { key: 'admin-listings', label: 'Listings & Requests', icon: <Store className="w-4 h-4" /> },
+      { key: 'admin-analytics', label: 'Transaction & Data Analytics', icon: <PieChart className="w-4 h-4 text-purple-400" /> },
+      { key: 'admin-users', label: 'User Directory & Authority', icon: <Users className="w-4 h-4 text-emerald-400" /> },
+      { key: 'admin-verification', label: 'Verification Queue', icon: <UserCheck className="w-4 h-4 text-purple-400" /> },
+      { key: 'admin-escrow', label: 'Escrow Vault & Payouts', icon: <Lock className="w-4 h-4 text-emerald-400" /> },
+      { key: 'admin-disputes', label: 'Dispute Resolution', icon: <Scale className="w-4 h-4 text-rose-400" /> },
       { key: 'orders', label: 'All Orders Pipeline', icon: <PackageCheck className="w-4 h-4" /> },
-      { key: 'admin-escrow', label: 'Escrow Vault & Payouts', icon: <Lock className="w-4 h-4 text-emerald-600" /> },
-      { key: 'admin-disputes', label: 'Dispute Resolution', icon: <Scale className="w-4 h-4 text-rose-600" /> },
       { key: 'logistics', label: 'Fleet Logistics Oversight', icon: <Truck className="w-4 h-4" /> },
-      { key: 'admin-analytics', label: 'Data Hub & Analytics', icon: <PieChart className="w-4 h-4" /> },
       { key: 'market-intel', label: 'Commodity Surveillance', icon: <TrendingUp className="w-4 h-4" /> },
+      { key: 'profile', label: 'Admin Profile & Switcher', icon: <ShieldCheck className="w-4 h-4 text-purple-400" /> },
       { key: 'messages', label: 'System Logs & Comms', icon: <MessageSquare className="w-4 h-4" /> },
     ];
   };
@@ -175,15 +179,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
         })}
       </nav>
 
-      {/* Nigerian Market Badge */}
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/50">
-        <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-700/50 flex items-center justify-center text-sm">
+      {/* Nigerian Market Badge & Auth Actions */}
+      <div className="p-3 border-t border-slate-800/80 bg-slate-950/50 space-y-2">
+        <button
+          type="button"
+          onClick={() => {
+            if (onCloseMobile) onCloseMobile();
+            openAuth();
+          }}
+          className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold text-xs transition-colors cursor-pointer border border-slate-700/60"
+        >
+          <KeyRound className="w-3.5 h-3.5" />
+          <span>Client Portals & Auth</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (onCloseMobile) onCloseMobile();
+            logoutToExitPage();
+          }}
+          className="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl text-rose-400 hover:bg-rose-950/30 text-[11px] font-semibold transition-colors cursor-pointer"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          <span>Sign Out / Exit Session</span>
+        </button>
+
+        <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-emerald-950 border border-emerald-700/50 flex items-center justify-center text-xs">
             🇳🇬
           </div>
           <div>
             <div className="text-[11px] font-bold text-slate-200">Federal Republic of Nigeria</div>
-            <div className="text-[10px] text-slate-400">All prices denominated in NGN (₦)</div>
+            <div className="text-[9px] text-slate-400">Escrow in NGN (₦)</div>
           </div>
         </div>
       </div>

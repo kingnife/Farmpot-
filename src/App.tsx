@@ -33,6 +33,8 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 import { VerificationQueue } from './components/admin/VerificationQueue';
 import { DisputeResolution } from './components/admin/DisputeResolution';
 import { EscrowVault } from './components/admin/EscrowVault';
+import { AdminAnalytics } from './components/admin/AdminAnalytics';
+import { AdminUserDirectory } from './components/admin/AdminUserDirectory';
 
 // Common views
 import { MessagesView } from './components/common/MessagesView';
@@ -42,6 +44,7 @@ import { KYCVerificationView } from './components/common/KYCVerificationView';
 import { ProfileView } from './components/common/ProfileView';
 import { ContractsView } from './components/common/ContractsView';
 import { Phase2FeaturesView } from './components/common/Phase2FeaturesView';
+import { UnifiedAuthView } from './components/auth/UnifiedAuthView';
 
 const MainLayout: React.FC = () => {
   const {
@@ -51,6 +54,7 @@ const MainLayout: React.FC = () => {
     setIsTourOpen,
     isNotificationDrawerOpen,
     setIsNotificationDrawerOpen,
+    isAuthScreenOpen,
   } = useApp();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -114,6 +118,14 @@ const MainLayout: React.FC = () => {
       case 'admin-escrow':
         return <EscrowVault />;
 
+      case 'admin-analytics':
+      case 'admin-data':
+        return <AdminAnalytics />;
+
+      case 'admin-users':
+      case 'admin-directory':
+        return <AdminUserDirectory />;
+
       case 'messages':
         return <MessagesView />;
 
@@ -141,6 +153,12 @@ const MainLayout: React.FC = () => {
       case 'farmer-bi':
       case 'aggregation':
         return <Phase2FeaturesView />;
+
+      case 'auth':
+      case 'login':
+      case 'signup':
+      case 'exit':
+        return <UnifiedAuthView />;
 
       default:
         return <BuyerDashboard onOpenCreateRequest={() => setIsCreateDemandOpen(true)} />;
@@ -180,6 +198,9 @@ const MainLayout: React.FC = () => {
           </span>
         </div>
       </footer>
+
+      {/* Client Authentication & Exit Suite Portal View */}
+      {isAuthScreenOpen && <UnifiedAuthView />}
 
       {/* Global Modals */}
       <CreateDemandRequestModal

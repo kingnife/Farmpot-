@@ -61,12 +61,58 @@ export interface User {
   lga: string;
   address: string;
   businessName?: string;
+  bio?: string;
+  cacNumber?: string;
+  ninNumber?: string;
   verification: VerificationProfile;
   trustScore: TrustScoreBreakdown;
   walletBalance: number; // in NGN
   escrowBalance: number; // in NGN
   joinedAt: string;
   disabled?: boolean;
+
+  // Bank & Settlement details
+  bankName?: string;
+  bankAccountNumber?: string;
+  bankAccountName?: string;
+
+  // Buyer Specific
+  buyerType?: 'PROCESSOR' | 'SUPERMARKET' | 'WHOLESALER' | 'EXPORTER' | 'HOTEL_RESTAURANT';
+  monthlyProcurementBudgetNGN?: number;
+  targetCrops?: string[];
+  facilityLocations?: string[];
+  preferredQualityGrade?: 'EXPORT_PREMIUM' | 'GRADE_A' | 'GRADE_B' | 'ALL';
+  storageWarehouseCapacityMT?: number;
+
+  // Farmer Specific
+  farmSizeHectares?: number;
+  primaryCrops?: string[];
+  storageCapacityTons?: number;
+  deliveryCapabilities?: string[];
+  cooperativeName?: string;
+  cooperativeRegId?: string;
+  establishedYear?: number;
+  farmingMethod?: 'ORGANIC' | 'CONVENTIONAL' | 'HYDROPONIC' | 'MIXED';
+  irrigationType?: 'RAINFED' | 'DRIP_IRRIGATION' | 'BOREHOLE_CENTER_PIVOT' | 'CANAL_FLOOD';
+
+  // Transporter Specific
+  fleetSize?: number;
+  vehicleTypes?: ('REFRIGERATED_TRUCK' | 'FLATBED_TRUCK' | 'BOX_VAN' | 'PICKUP_TRUCK')[];
+  maxPayloadTons?: number;
+  coverageStates?: string[];
+  gitInsuranceActive?: boolean; // Goods-In-Transit Insurance
+  gitPolicyNumber?: string;
+  insuranceProvider?: string;
+  frscFleetNumber?: string;
+  temperatureControlled?: boolean;
+
+  // Admin / Staff Specific
+  department?: 'ESCROW_SETTLEMENTS' | 'TRUST_VERIFICATION' | 'DISPUTE_TRIBUNAL' | 'OPERATIONS' | 'EXECUTIVE';
+  badgeId?: string;
+  supervisorRole?: string;
+  clearanceLevel?: 'TIER_1' | 'TIER_2' | 'TIER_3' | 'TIER_4_MASTER';
+  twoFactorEnabled?: boolean;
+  emergencyPhone?: string;
 }
 
 export interface FarmerProfile extends User {
@@ -535,3 +581,22 @@ export interface AggregatedOrderBatch {
   consolidatedTransportJobId?: string;
   status: 'ACCUMULATING' | 'READY_FOR_CONSOLIDATION' | 'IN_TRANSIT_TO_BUYER' | 'DELIVERED' | 'SETTLED';
 }
+
+export type AuthClientType = 'BUYER' | 'TRANSPORTER' | 'ADMIN' | 'FARMER';
+export type AuthPageView = 'login' | 'signup' | 'exit';
+
+export interface SessionSummary {
+  userId: string;
+  userName: string;
+  businessName?: string;
+  role: UserRole;
+  clientType: AuthClientType;
+  loginTime: string;
+  logoutTime: string;
+  durationMinutes: number;
+  activeOrdersCount: number;
+  escrowProtectedAmountNGN: number;
+  walletBalanceNGN: number;
+  exitReason?: string;
+}
+
