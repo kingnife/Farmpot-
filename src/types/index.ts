@@ -314,6 +314,18 @@ export interface EscrowState {
   };
 }
 
+export interface LogisticsCheckpoint {
+  id: string;
+  name: string;
+  state: string;
+  status: 'COMPLETED' | 'IN_PROGRESS' | 'PENDING';
+  timestamp?: string;
+  temperatureC?: number;
+  notes?: string;
+  lat?: number;
+  lng?: number;
+}
+
 export interface TransportJob {
   id: string;
   orderId: string;
@@ -321,6 +333,14 @@ export interface TransportJob {
   transporterName?: string;
   transporterPhone?: string;
   transporterVehicle?: string;
+  vehiclePlate?: string;
+  vehicleType?: string;
+  driverName?: string;
+  driverPhone?: string;
+  driverPhoto?: string;
+  gitPolicyNumber?: string;
+  insuranceProvider?: string;
+  frscFleetNumber?: string;
   pickupLocation: string;
   pickupState: string;
   pickupContact: string;
@@ -330,13 +350,32 @@ export interface TransportJob {
   productDescription: string;
   totalWeightKg: number;
   agreedFreightFeeNGN: number;
+  freightPriceNGN?: number;
   status: 'AVAILABLE_JOB' | 'ACCEPTED' | 'SCHEDULED' | 'PICKUP' | 'PICKED_UP' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
+  currentLocation?: string;
+  currentCoordinates?: { lat: number; lng: number };
+  originCoordinates?: { lat: number; lng: number };
+  destinationCoordinates?: { lat: number; lng: number };
+  temperatureCelsius?: number;
+  targetTemperatureMin?: number;
+  targetTemperatureMax?: number;
+  humidityPercent?: number;
+  cargoSealNumber?: string;
+  sealStatus?: 'INTACT_LOCKED' | 'INSPECTED' | 'BROKEN_ALERT';
+  speedKmH?: number;
+  estimatedTimeOfArrival?: string;
+  distanceTotalKm?: number;
+  distanceCoveredKm?: number;
+  temperatureHistory?: { time: string; tempC: number; location: string }[];
+  checkpoints?: LogisticsCheckpoint[];
+  waybillNumber?: string;
+  deliveryWaybillNumber?: string;
+  waybillPhoto?: string;
   pickupScheduledTime?: string;
   actualPickupTime?: string;
   actualDeliveryTime?: string;
   pickupProofPhoto?: string;
   deliveryProofPhoto?: string;
-  deliveryWaybillNumber?: string;
   driverNotes?: string;
 }
 

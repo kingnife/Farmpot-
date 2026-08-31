@@ -12,11 +12,14 @@ import {
   MapPin,
   Calendar,
   ShieldCheck,
-  UserCheck
+  UserCheck,
+  FileText,
+  Navigation
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Order } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
+import { DigitalWaybillModal } from '../logistics/DigitalWaybillModal';
 
 export const FarmerOrders: React.FC = () => {
   const {
@@ -26,8 +29,11 @@ export const FarmerOrders: React.FC = () => {
     setSelectedOrderId,
     updateOrderStatus,
     assignTransporter,
+    setActiveView,
     users,
   } = useApp();
+
+  const [isWaybillOpen, setIsWaybillOpen] = useState(false);
 
   const farmerOrders = orders.filter(o => o.supplierId === currentUser.id);
   const selectedOrder = orders.find(o => o.id === selectedOrderId) || farmerOrders[0];
@@ -189,22 +195,57 @@ export const FarmerOrders: React.FC = () => {
 
               {/* Transporter Details */}
               {selectedOrder.logistics && (
-                <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-2 text-xs">
-                  <div className="font-bold text-blue-950 flex items-center gap-1.5">
-                    <Truck className="w-4 h-4 text-blue-600" />
-                    Assigned Transporter
+                <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-200 space-y-3 text-xs">
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-blue-950 flex items-center gap-1.5">
+                      <Truck className="w-4 h-4 text-blue-600" />
+                      Assigned Transporter & Haulage
+                    </div>
+                    <StatusBadge status={selectedOrder.logistics.status} size="sm" />
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-slate-700">
                     <div>Transporter: <strong>{selectedOrder.logistics.transporterName || 'Pending'}</strong></div>
-                    <div>Vehicle: <strong>{selectedOrder.logistics.transporterVehicle || 'Cold Van'}</strong></div>
-                    <div>Waybill #: <strong>{selectedOrder.logistics.deliveryWaybillNumber || 'FP-WB-' + selectedOrder.id}</strong></div>
-                    <div>Driver Contact: <strong>{selectedOrder.logistics.transporterPhone || selectedOrder.logistics.pickupContact}</strong></div>
+                    <div>Vehicle / Type: <strong>{selectedOrder.logistics.vehicleType || selectedOrder.logistics.transporterVehicle || '15T Reefer'}</strong></div>
+                    <div>Waybill #: <strong className="font-mono text-blue-900">{selectedOrder.logistics.waybillNumber || selectedOrder.logistics.deliveryWaybillNumber || 'FP-WB-' + selectedOrder.id}</strong></div>
+                    <div>Driver Contact: <strong>{selectedOrder.logistics.driverPhone || selectedOrder.logistics.transporterPhone || selectedOrder.logistics.pickupContact}</strong></div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1 border-t border-blue-200/60">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedOrderId(selectedOrder.id);
+                        setActiveView('logistics');
+                      }}
+                      className="px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <Navigation className="w-3.5 h-3.5" />
+                      <span>Track Dispatch on Map</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsWaybillOpen(true)}
+                      className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg font-bold flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-slate-500" />
+                      <span>View Waybill</span>
+                    </button>
                   </div>
                 </div>
               )}
             </div>
           )}
         </div>
+      )}
+
+      {/* Digital Waybill Modal */}
+      {selectedOrder && selectedOrder.logistics && (
+        <DigitalWaybillModal
+          isOpen={isWaybillOpen}
+          onClose={() => setIsWaybillOpen(false)}
+          order={selectedOrder}
+          logistics={selectedOrder.logistics}
+        />
       )}
     </div>
   );

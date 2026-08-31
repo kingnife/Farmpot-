@@ -24,6 +24,7 @@ import { Order, OrderStatus } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
 import { TrustScoreBadge } from '../common/TrustScoreBadge';
 import { QualityInspectionModal } from './QualityInspectionModal';
+import { DigitalWaybillModal } from '../logistics/DigitalWaybillModal';
 
 export const BuyerOrders: React.FC = () => {
   const {
@@ -39,6 +40,7 @@ export const BuyerOrders: React.FC = () => {
 
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [isInspectionOpen, setIsInspectionOpen] = useState(false);
+  const [isWaybillOpen, setIsWaybillOpen] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [rating, setRating] = useState<number>(5);
   const [reviewComment, setReviewComment] = useState('Excellent high-brix Roma tomatoes. Exactly as specified in contract, cold-chain arrived intact.');
@@ -358,7 +360,7 @@ export const BuyerOrders: React.FC = () => {
                 </div>
 
                 {/* Transporter & Logistics Card */}
-                <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-2">
+                <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                       <Truck className="w-4 h-4 text-blue-600" />
@@ -370,22 +372,46 @@ export const BuyerOrders: React.FC = () => {
                   </div>
 
                   {selectedOrder.logistics ? (
-                    <div className="space-y-1 text-xs text-slate-600 pt-1">
-                      <div className="flex justify-between">
-                        <span>Hauler:</span>
-                        <span className="font-semibold text-slate-800">{selectedOrder.logistics.transporterName}</span>
+                    <div className="space-y-2 pt-1 text-xs">
+                      <div className="space-y-1 text-slate-600">
+                        <div className="flex justify-between">
+                          <span>Hauler:</span>
+                          <span className="font-semibold text-slate-800">{selectedOrder.logistics.transporterName}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Vehicle / Plate:</span>
+                          <span className="font-semibold text-slate-800">{selectedOrder.logistics.vehiclePlate}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Waybill #:</span>
+                          <span className="font-mono font-bold text-blue-800">{selectedOrder.logistics.waybillNumber}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Reefer Temp:</span>
+                          <span className="font-semibold text-blue-600">{selectedOrder.logistics.temperatureCelsius}°C</span>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span>Vehicle / Plate:</span>
-                        <span className="font-semibold text-slate-800">{selectedOrder.logistics.vehiclePlate}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Waybill #:</span>
-                        <span className="font-mono text-slate-800">{selectedOrder.logistics.waybillNumber}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Reefer Temp:</span>
-                        <span className="font-semibold text-blue-600">{selectedOrder.logistics.temperatureCelsius}°C</span>
+
+                      <div className="flex items-center gap-1.5 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedOrderId(selectedOrder.id);
+                            setActiveView('logistics');
+                          }}
+                          className="flex-1 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <Truck className="w-3.5 h-3.5" />
+                          <span>Track GPS Route</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsWaybillOpen(true)}
+                          className="py-1.5 px-2.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-slate-500" />
+                          <span>Waybill</span>
+                        </button>
                       </div>
                     </div>
                   ) : (
@@ -549,6 +575,16 @@ export const BuyerOrders: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Digital Waybill Modal */}
+      {selectedOrder && selectedOrder.logistics && (
+        <DigitalWaybillModal
+          isOpen={isWaybillOpen}
+          onClose={() => setIsWaybillOpen(false)}
+          order={selectedOrder}
+          logistics={selectedOrder.logistics}
+        />
       )}
     </div>
   );

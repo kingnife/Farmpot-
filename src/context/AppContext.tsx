@@ -115,6 +115,8 @@ interface AppContextType {
   assignTransporterToOrder: (orderId: string, transporterId: string) => void;
   updateTransportJobStatus: (orderId: string, status: TransportJob['status'], proofPhoto?: string, notes?: string) => void;
   updateLogisticsStatus: (orderId: string, status: TransportJob['status'] | string, details?: any) => void;
+  updateLogisticsCheckpoint: (orderId: string, checkpointId: string, status: 'COMPLETED' | 'IN_PROGRESS' | 'PENDING', notes?: string, temperatureC?: number) => void;
+  updateLogisticsTelemetry: (orderId: string, telemetry: Partial<TransportJob>) => void;
 
   // Quality Confirmation
   submitQualityInspection: (orderId: string, inspection: QualityConfirmationCheck) => void;
@@ -1188,35 +1190,70 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast(`Transporter ${transporter.name} assigned to Order ${orderId}!`, 'success');
   };
 
-  const updateTransportJobStatus = (orderId: string, status: TransportJob['status'], proofPhoto?: string, notes?: string) => {
+  const updateLogisticsStatus = (
+    orderId: string,
+    status: TransportJob['status'] | string,
+    details?: Partial<TransportJob> & { proofPhoto?: string; notes?: string; currentLocation?: string; temperatureCelsius?: number }
+  ) => {
     const order = orders.find(o => o.id === orderId);
     if (!order) return;
 
+    const typedStatus = status as TransportJob['status'];
     let nextOrderStatus: OrderStatus = order.status;
-    if (status === 'PICKED_UP') nextOrderStatus = 'PICKED_UP';
-    if (status === 'IN_TRANSIT') nextOrderStatus = 'IN_TRANSIT';
-    if (status === 'DELIVERED') nextOrderStatus = 'QUALITY_PENDING';
+    if (typedStatus === 'PICKED_UP') nextOrderStatus = 'PICKED_UP';
+    if (typedStatus === 'IN_TRANSIT') nextOrderStatus = 'IN_TRANSIT';
+    if (typedStatus === 'DELIVERED') nextOrderStatus = 'DELIVERED';
 
     setOrders(prev => prev.map(o => {
       if (o.id === orderId && o.logistics) {
+        const updatedTempHistory = details?.temperatureCelsius
+          ? [
+              ...(o.logistics.temperatureHistory || []),
+              {
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                tempC: details.temperatureCelsius,
+                location: details.currentLocation || o.logistics.currentLocation || 'Transit Waypoint',
+              }
+            ]
+          : o.logistics.temperatureHistory;
+
+        const updatedCheckpoints = o.logistics.checkpoints?.map(chk => {
+          if (typedStatus === 'PICKED_UP' && chk.id === 'chk-1') {
+            return { ...chk, status: 'COMPLETED' as const, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+          }
+          if (typedStatus === 'DELIVERED' && chk.status !== 'COMPLETED') {
+            return { ...chk, status: 'COMPLETED' as const, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+          }
+          return chk;
+        }) || o.logistics.checkpoints;
+
+        const updatedLogistics: TransportJob = {
+          ...o.logistics,
+          status: typedStatus,
+          currentLocation: details?.currentLocation || o.logistics.currentLocation,
+          temperatureCelsius: details?.temperatureCelsius !== undefined ? details.temperatureCelsius : o.logistics.temperatureCelsius,
+          actualPickupTime: typedStatus === 'PICKED_UP' ? new Date().toISOString() : o.logistics.actualPickupTime,
+          actualDeliveryTime: typedStatus === 'DELIVERED' ? new Date().toISOString() : o.logistics.actualDeliveryTime,
+          pickupProofPhoto: details?.proofPhoto || details?.pickupProofPhoto || o.logistics.pickupProofPhoto,
+          deliveryProofPhoto: details?.proofPhoto || details?.deliveryProofPhoto || o.logistics.deliveryProofPhoto,
+          driverNotes: details?.notes || details?.driverNotes || o.logistics.driverNotes,
+          temperatureHistory: updatedTempHistory,
+          checkpoints: updatedCheckpoints,
+          speedKmH: typedStatus === 'DELIVERED' ? 0 : (details?.speedKmH !== undefined ? details.speedKmH : o.logistics.speedKmH),
+          distanceCoveredKm: typedStatus === 'DELIVERED' ? o.logistics.distanceTotalKm : (details?.distanceCoveredKm !== undefined ? details.distanceCoveredKm : o.logistics.distanceCoveredKm),
+          ...(details || {}),
+        };
+
         return {
           ...o,
           status: nextOrderStatus,
-          logistics: {
-            ...o.logistics,
-            status,
-            actualPickupTime: status === 'PICKED_UP' ? new Date().toISOString() : o.logistics.actualPickupTime,
-            actualDeliveryTime: status === 'DELIVERED' ? new Date().toISOString() : o.logistics.actualDeliveryTime,
-            pickupProofPhoto: proofPhoto || o.logistics.pickupProofPhoto,
-            deliveryProofPhoto: proofPhoto || o.logistics.deliveryProofPhoto,
-            driverNotes: notes || o.logistics.driverNotes,
-          },
+          logistics: updatedLogistics,
           historyTimeline: [
             ...o.historyTimeline,
             {
               state: nextOrderStatus,
               timestamp: new Date().toISOString(),
-              description: notes || `Logistics status updated to ${status.replace(/_/g, ' ')}`,
+              description: details?.notes || `Logistics status updated to ${status.replace(/_/g, ' ')}. Location: ${updatedLogistics.currentLocation || 'In Transit'}.`,
               actor: currentUser.name,
             }
           ]
@@ -1225,11 +1262,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return o;
     }));
 
-    if (status === 'DELIVERED') {
+    if (typedStatus === 'DELIVERED') {
       addNotification({
         userId: order.buyerId,
-        title: 'Produce Delivered! Please Inspect',
-        message: `Transporter delivered ${order.quantity} ${order.unit} of ${order.product}. Please perform quality & quantity check to release payment.`,
+        title: 'Agricultural Freight Delivered!',
+        message: `Transporter delivered ${order.quantity} ${order.unit} of ${order.product}. Please conduct destination Quality Inspection to release Escrow.`,
         type: 'DELIVERY',
         targetType: 'ORDER',
         targetId: order.id,
@@ -1237,7 +1274,89 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
     }
 
-    showToast(`Logistics updated: ${status.replace(/_/g, ' ')}`, 'success');
+    showToast(`Logistics status updated to ${status.replace(/_/g, ' ')}`, 'success');
+  };
+
+  const updateLogisticsCheckpoint = (
+    orderId: string,
+    checkpointId: string,
+    status: 'COMPLETED' | 'IN_PROGRESS' | 'PENDING',
+    notes?: string,
+    temperatureC?: number
+  ) => {
+    setOrders(prev => prev.map(o => {
+      if (o.id === orderId && o.logistics && o.logistics.checkpoints) {
+        let checkpointName = '';
+        const updatedCheckpoints = o.logistics.checkpoints.map(chk => {
+          if (chk.id === checkpointId) {
+            checkpointName = chk.name;
+            return {
+              ...chk,
+              status,
+              timestamp: status === 'COMPLETED' ? new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : chk.timestamp,
+              notes: notes || chk.notes,
+              temperatureC: temperatureC !== undefined ? temperatureC : chk.temperatureC,
+            };
+          }
+          return chk;
+        });
+
+        return {
+          ...o,
+          logistics: {
+            ...o.logistics,
+            checkpoints: updatedCheckpoints,
+            currentLocation: checkpointName ? `${checkpointName}` : o.logistics.currentLocation,
+            temperatureCelsius: temperatureC !== undefined ? temperatureC : o.logistics.temperatureCelsius,
+          },
+          historyTimeline: [
+            ...o.historyTimeline,
+            {
+              state: o.status,
+              timestamp: new Date().toISOString(),
+              description: `Checkpoint "${checkpointName}" marked as ${status.replace(/_/g, ' ')}. ${notes ? `Notes: ${notes}` : ''}`,
+              actor: currentUser.name,
+            }
+          ]
+        };
+      }
+      return o;
+    }));
+
+    showToast('Logistics checkpoint updated successfully', 'success');
+  };
+
+  const updateLogisticsTelemetry = (orderId: string, telemetry: Partial<TransportJob>) => {
+    setOrders(prev => prev.map(o => {
+      if (o.id === orderId && o.logistics) {
+        const updatedTempHistory = telemetry.temperatureCelsius !== undefined
+          ? [
+              ...(o.logistics.temperatureHistory || []),
+              {
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                tempC: telemetry.temperatureCelsius,
+                location: telemetry.currentLocation || o.logistics.currentLocation || 'Corridor Telemetry Ping',
+              }
+            ]
+          : o.logistics.temperatureHistory;
+
+        return {
+          ...o,
+          logistics: {
+            ...o.logistics,
+            ...telemetry,
+            temperatureHistory: updatedTempHistory,
+          }
+        };
+      }
+      return o;
+    }));
+
+    showToast('Live telemetry sensors synced', 'info');
+  };
+
+  const updateTransportJobStatus = (orderId: string, status: TransportJob['status'], proofPhoto?: string, notes?: string) => {
+    updateLogisticsStatus(orderId, status, { proofPhoto, notes });
   };
 
   // Quality Inspection
@@ -1510,85 +1629,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast(`Feature flag ${flag} toggled`, 'info');
   };
 
-  // Additional Methods & Aliases
-  const updateLogisticsStatus = (
-    orderId: string,
-    status: TransportJob['status'] | string,
-    details?: {
-      currentLocation?: string;
-      temperatureCelsius?: number;
-      waybillPhoto?: string;
-      driverNotes?: string;
-    }
-  ) => {
-    const order = orders.find(o => o.id === orderId);
-    if (!order) return;
-
-    let nextOrderStatus: OrderStatus = order.status;
-    if (status === 'PICKED_UP') nextOrderStatus = 'PICKED_UP';
-    if (status === 'IN_TRANSIT') nextOrderStatus = 'IN_TRANSIT';
-    if (status === 'DELIVERED') nextOrderStatus = 'QUALITY_PENDING';
-
-    setOrders(prev => prev.map(o => {
-      if (o.id === orderId) {
-        const currentLogistics = o.logistics || {
-          orderId: o.id,
-          transporterId: currentUser?.id || 'usr-transporter-1',
-          transporterName: currentUser?.name || 'RapidTransit Haulage',
-          vehiclePlateNumber: 'KJA-892-XA',
-          vehicleType: 'REFRIGERATED_TRUCK',
-          pickupLocation: `${o.supplierLga || 'Zaria'}, ${o.supplierState || 'Kaduna'}`,
-          deliveryDestination: o.deliveryDestination || `${o.buyerLga || 'Ikeja'}, ${o.buyerState || 'Lagos'}`,
-          agreedFreightFeeNGN: o.logisticsFeeNGN || 85000,
-          status: status as any,
-          gpsTrackingUrl: 'https://maps.google.com/?q=11.0855,7.7199',
-        };
-
-        const updatedLogistics: TransportJob = {
-          ...currentLogistics,
-          status: status as any,
-          currentLocation: details?.currentLocation || currentLogistics.currentLocation,
-          temperatureCelsius: details?.temperatureCelsius !== undefined ? details.temperatureCelsius : currentLogistics.temperatureCelsius,
-          pickupProofPhoto: status === 'PICKED_UP' ? (details?.waybillPhoto || currentLogistics.pickupProofPhoto) : currentLogistics.pickupProofPhoto,
-          deliveryProofPhoto: status === 'DELIVERED' ? (details?.waybillPhoto || currentLogistics.deliveryProofPhoto) : currentLogistics.deliveryProofPhoto,
-          driverNotes: details?.driverNotes || currentLogistics.driverNotes,
-          actualPickupTime: status === 'PICKED_UP' ? new Date().toISOString() : currentLogistics.actualPickupTime,
-          actualDeliveryTime: status === 'DELIVERED' ? new Date().toISOString() : currentLogistics.actualDeliveryTime,
-        };
-
-        return {
-          ...o,
-          status: nextOrderStatus,
-          logistics: updatedLogistics,
-          historyTimeline: [
-            ...(o.historyTimeline || []),
-            {
-              state: nextOrderStatus,
-              timestamp: new Date().toISOString(),
-              description: details?.driverNotes || `Logistics status updated to ${status.replace(/_/g, ' ')}`,
-              actor: currentUser?.name || 'Transporter',
-            }
-          ]
-        };
-      }
-      return o;
-    }));
-
-    if (status === 'DELIVERED') {
-      addNotification({
-        userId: order.buyerId,
-        title: 'Produce Delivered! Please Inspect',
-        message: `Transporter delivered ${order.quantity} ${order.unit} of ${order.product}. Please perform quality & quantity check to release payment.`,
-        type: 'DELIVERY',
-        targetType: 'ORDER',
-        targetId: order.id,
-        channel: 'IN_APP',
-      });
-    }
-
-    showToast(`Logistics updated: ${status.replace(/_/g, ' ')}`, 'success');
-  };
-
   const toggleRecurringSchedule = (id: string) => {
     setRecurringSchedules(prev => prev.map(s => {
       if (s.id === id) {
@@ -1740,6 +1780,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         assignTransporterToOrder,
         updateTransportJobStatus,
         updateLogisticsStatus,
+        updateLogisticsCheckpoint,
+        updateLogisticsTelemetry,
         submitQualityInspection,
         disputes,
         raiseDispute,

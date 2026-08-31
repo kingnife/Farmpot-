@@ -27,6 +27,7 @@ import { CreateListingModal } from './components/farmer/CreateListingModal';
 import { TransporterDashboard } from './components/transporter/TransporterDashboard';
 import { AvailableFreightJobs } from './components/transporter/AvailableFreightJobs';
 import { ActiveDeliveryView } from './components/transporter/ActiveDeliveryView';
+import { LogisticsTrackingHub } from './components/logistics/LogisticsTrackingHub';
 
 // Admin views
 import { AdminDashboard } from './components/admin/AdminDashboard';
@@ -106,8 +107,13 @@ const MainLayout: React.FC = () => {
         return <AvailableFreightJobs />;
 
       case 'active-delivery':
+        if (currentRole === 'TRANSPORTER') return <ActiveDeliveryView />;
+        return <LogisticsTrackingHub />;
+
       case 'logistics':
-        return <ActiveDeliveryView />;
+      case 'tracking':
+      case 'freight-tracking':
+        return <LogisticsTrackingHub />;
 
       case 'admin-verification':
         return <VerificationQueue />;
