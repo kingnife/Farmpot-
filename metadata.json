@@ -1,0 +1,6 @@
+{
+  "name": "FarmPot",
+  "description": "Nigerian agricultural commerce, verified supplier matching, escrow settlement, and supply-chain logistics platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
