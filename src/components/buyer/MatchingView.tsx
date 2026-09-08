@@ -18,6 +18,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { MatchScoreResult, Listing } from '../../types';
 import { TrustScoreBadge } from '../common/TrustScoreBadge';
+import { Dropdown } from '../common/Dropdown';
 
 interface MatchingViewProps {
   onOpenNegotiation: (listing: Listing, requestId?: string) => void;
@@ -92,17 +93,18 @@ export const MatchingView: React.FC<MatchingViewProps> = ({ onOpenNegotiation })
         {/* Switch Request Dropdown */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-slate-500">Selected Request:</span>
-          <select
+          <Dropdown
+            id="matching-select-request-dropdown"
+            align="right"
+            menuClassName="w-80"
+            options={(demandRequests || []).map(r => ({
+              value: r.id,
+              label: `${r.product} (${r.quantity} ${r.unit})`,
+              badge: r.id,
+            }))}
             value={activeRequest.id}
-            onChange={e => setSelectedRequestId(e.target.value)}
-            className="text-xs py-1.5 px-3 rounded-xl border border-slate-200 bg-white font-semibold focus:ring-2 focus:ring-emerald-500"
-          >
-            {(demandRequests || []).map(r => (
-              <option key={r.id} value={r.id}>
-                {r.id}: {r.product} ({r.quantity} {r.unit})
-              </option>
-            ))}
-          </select>
+            onChange={val => setSelectedRequestId(val)}
+          />
         </div>
       </div>
 

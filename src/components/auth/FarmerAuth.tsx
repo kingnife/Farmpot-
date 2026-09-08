@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AuthPageView } from '../../types';
+import { Dropdown } from '../common/Dropdown';
 
 interface FarmerAuthProps {
   initialView?: AuthPageView;
@@ -415,19 +416,20 @@ export const FarmerAuth: React.FC<FarmerAuthProps> = ({
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Farm Location State *
                   </label>
-                  <select
+                  <Dropdown
+                    id="farmer-auth-state-dropdown"
+                    options={[
+                      { value: 'Kaduna', label: 'Kaduna State' },
+                      { value: 'Kano', label: 'Kano State' },
+                      { value: 'Benue', label: 'Benue State' },
+                      { value: 'Oyo', label: 'Oyo State' },
+                      { value: 'Plateau', label: 'Plateau State' },
+                      { value: 'Niger', label: 'Niger State' },
+                      { value: 'Ogun', label: 'Ogun State' },
+                    ]}
                     value={state}
-                    onChange={e => setState(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-sm outline-none bg-white"
-                  >
-                    <option value="Kaduna">Kaduna State</option>
-                    <option value="Kano">Kano State</option>
-                    <option value="Benue">Benue State</option>
-                    <option value="Oyo">Oyo State</option>
-                    <option value="Plateau">Plateau State</option>
-                    <option value="Niger">Niger State</option>
-                    <option value="Ogun">Ogun State</option>
-                  </select>
+                    onChange={val => setState(val)}
+                  />
                 </div>
 
                 <div>

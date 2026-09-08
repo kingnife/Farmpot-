@@ -34,6 +34,7 @@ import { FarmerProfileForm } from '../profile/FarmerProfileForm';
 import { TransporterProfileForm } from '../profile/TransporterProfileForm';
 import { AdminProfileForm } from '../profile/AdminProfileForm';
 import { NIGERIAN_STATES, NIGERIAN_LGAS_BY_STATE, AVATAR_PRESETS } from '../../data/nigeriaGeography';
+import { Dropdown } from './Dropdown';
 
 export const ProfileView: React.FC = () => {
   const { currentUser, users, updateUserProfile, setActiveView, showToast } = useApp();
@@ -519,30 +520,32 @@ export const ProfileView: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 State (Nigeria)
               </label>
-              <select
+              <Dropdown
+                id="profile-state-dropdown"
+                menuClassName="max-h-56"
+                options={NIGERIAN_STATES.map(st => ({
+                  value: st,
+                  label: `${st} State`,
+                }))}
                 value={formData.state || NIGERIAN_STATES[0]}
-                onChange={e => handleStateChange(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              >
-                {NIGERIAN_STATES.map(st => (
-                  <option key={st} value={st}>{st} State</option>
-                ))}
-              </select>
+                onChange={val => handleStateChange(val)}
+              />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 LGA (Local Government Area)
               </label>
-              <select
+              <Dropdown
+                id="profile-lga-dropdown"
+                menuClassName="max-h-56"
+                options={availableLgas.map(lg => ({
+                  value: lg,
+                  label: lg,
+                }))}
                 value={formData.lga || availableLgas[0]}
-                onChange={e => handleFieldChange({ lga: e.target.value })}
-                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              >
-                {availableLgas.map(lg => (
-                  <option key={lg} value={lg}>{lg}</option>
-                ))}
-              </select>
+                onChange={val => handleFieldChange({ lga: val })}
+              />
             </div>
 
             <div className="sm:col-span-2">

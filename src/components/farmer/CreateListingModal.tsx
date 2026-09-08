@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PlusCircle, Store, MapPin, Calendar, Camera, DollarSign, Sparkles } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Modal } from '../common/Modal';
+import { Dropdown } from '../common/Dropdown';
 
 interface CreateListingModalProps {
   isOpen: boolean;
@@ -88,17 +89,18 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, 
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Produce Category *</label>
-            <select
+            <Dropdown
+              id="modal-listing-category-dropdown"
+              options={[
+                { value: 'VEGETABLES', label: 'Vegetables (Tomatoes, Pepper, Onions)' },
+                { value: 'GRAINS', label: 'Grains (Maize, Rice, Sorghum)' },
+                { value: 'TUBERS', label: 'Tubers (Cassava, Yam, Potatoes)' },
+                { value: 'OIL_SEEDS', label: 'Oil Seeds (Soybeans, Sesame)' },
+                { value: 'FRUITS', label: 'Fruits & Citrus' },
+              ]}
               value={category}
-              onChange={e => setCategory(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="VEGETABLES">Vegetables (Tomatoes, Pepper, Onions)</option>
-              <option value="GRAINS">Grains (Maize, Rice, Sorghum)</option>
-              <option value="TUBERS">Tubers (Cassava, Yam, Potatoes)</option>
-              <option value="OIL_SEEDS">Oil Seeds (Soybeans, Sesame)</option>
-              <option value="FRUITS">Fruits & Citrus</option>
-            </select>
+              onChange={val => setCategory(val as any)}
+            />
           </div>
         </div>
 
@@ -117,15 +119,16 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, 
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Quality Grade *</label>
-            <select
+            <Dropdown
+              id="modal-listing-grade-dropdown"
+              options={[
+                { value: 'GRADE_A', label: 'Grade A (Premium High Brix / Clean)' },
+                { value: 'GRADE_B', label: 'Grade B (Standard Commercial)' },
+                { value: 'EXPORT_PREMIUM', label: 'Export Premium (GAP Certified)' },
+              ]}
               value={qualityGrade}
-              onChange={e => setQualityGrade(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="GRADE_A">Grade A (Premium High Brix / Clean)</option>
-              <option value="GRADE_B">Grade B (Standard Commercial)</option>
-              <option value="EXPORT_PREMIUM">Export Premium (GAP Certified)</option>
-            </select>
+              onChange={val => setQualityGrade(val as any)}
+            />
           </div>
         </div>
 
@@ -145,17 +148,18 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, 
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Unit of Measure *</label>
-            <select
+            <Dropdown
+              id="modal-listing-unit-dropdown"
+              options={[
+                { value: 'CRATE', label: 'Crates (approx. 25kg)' },
+                { value: 'BAG_50KG', label: '50kg Bags' },
+                { value: 'BAG_100KG', label: '100kg Bags' },
+                { value: 'TONNE', label: 'Metric Tonnes' },
+                { value: 'KG', label: 'Kilograms' },
+              ]}
               value={unit}
-              onChange={e => setUnit(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="CRATE">Crates (approx. 25kg)</option>
-              <option value="BAG_50KG">50kg Bags</option>
-              <option value="BAG_100KG">100kg Bags</option>
-              <option value="TONNE">Metric Tonnes</option>
-              <option value="KG">Kilograms</option>
-            </select>
+              onChange={val => setUnit(val as any)}
+            />
           </div>
 
           <div>
@@ -186,15 +190,16 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, 
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Logistics / Delivery Capability *</label>
-            <select
+            <Dropdown
+              id="modal-listing-delivery-capability-dropdown"
+              options={[
+                { value: 'NATIONWIDE_COLD_CHAIN', label: 'Nationwide Reefer / Cold-Chain Haulage' },
+                { value: 'REGIONAL_DELIVERY', label: 'Regional Transport (Statewide)' },
+                { value: 'FARM_GATE', label: 'Farm Gate Loading Only' },
+              ]}
               value={deliveryCapability}
-              onChange={e => setDeliveryCapability(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="NATIONWIDE_COLD_CHAIN">Nationwide Reefer / Cold-Chain Haulage</option>
-              <option value="REGIONAL_DELIVERY">Regional Transport (Statewide)</option>
-              <option value="FARM_GATE">Farm Gate Loading Only</option>
-            </select>
+              onChange={val => setDeliveryCapability(val as any)}
+            />
           </div>
         </div>
 

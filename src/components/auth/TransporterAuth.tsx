@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AuthPageView } from '../../types';
+import { Dropdown } from '../common/Dropdown';
 
 interface TransporterAuthProps {
   initialView?: AuthPageView;
@@ -410,33 +411,35 @@ export const TransporterAuth: React.FC<TransporterAuthProps> = ({
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Primary Operations Hub (State) *
                   </label>
-                  <select
+                  <Dropdown
+                    id="transporter-auth-state-dropdown"
+                    options={[
+                      { value: 'Kano', label: 'Kano State (Northern Terminal)' },
+                      { value: 'Lagos', label: 'Lagos State (Southern Port Hub)' },
+                      { value: 'Kaduna', label: 'Kaduna State' },
+                      { value: 'Oyo', label: 'Oyo State (Ibadan Gateway)' },
+                      { value: 'Rivers', label: 'Rivers State (Port Harcourt)' },
+                      { value: 'FCT Abuja', label: 'FCT Abuja' },
+                    ]}
                     value={baseState}
-                    onChange={e => setBaseState(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 text-sm outline-none bg-white"
-                  >
-                    <option value="Kano">Kano State (Northern Terminal)</option>
-                    <option value="Lagos">Lagos State (Southern Port Hub)</option>
-                    <option value="Kaduna">Kaduna State</option>
-                    <option value="Oyo">Oyo State (Ibadan Gateway)</option>
-                    <option value="Rivers">Rivers State (Port Harcourt)</option>
-                    <option value="FCT Abuja">FCT Abuja</option>
-                  </select>
+                    onChange={val => setBaseState(val)}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Total Active Fleet Size
                   </label>
-                  <select
+                  <Dropdown
+                    id="transporter-auth-fleet-dropdown"
+                    options={[
+                      { value: '1', label: '1 - 3 Trucks (Independent Operator)' },
+                      { value: '8', label: '4 - 15 Trucks (Mid-Sized Carrier)' },
+                      { value: '25', label: '16 - 50+ Trucks (National Logistics Fleet)' },
+                    ]}
                     value={fleetSize}
-                    onChange={e => setFleetSize(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 text-sm outline-none bg-white"
-                  >
-                    <option value="1">1 - 3 Trucks (Independent Operator)</option>
-                    <option value="8">4 - 15 Trucks (Mid-Sized Carrier)</option>
-                    <option value="25">16 - 50+ Trucks (National Logistics Fleet)</option>
-                  </select>
+                    onChange={val => setFleetSize(val)}
+                  />
                 </div>
 
                 <div>

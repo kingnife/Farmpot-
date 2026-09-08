@@ -17,6 +17,7 @@ import { useApp } from '../../context/AppContext';
 import { Listing } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
 import { TrustScoreBadge } from '../common/TrustScoreBadge';
+import { Dropdown } from '../common/Dropdown';
 
 interface BrowseProduceProps {
   onOpenNegotiation: (listing: Listing) => void;
@@ -76,7 +77,7 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-[#EDFFE0] text-[#334E1B] border border-[#BEE7A5]">
             {filteredListings.length} Available Listings
           </span>
         </div>
@@ -93,36 +94,41 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
               placeholder="Search Roma Tomatoes, Maize, Habanero, Kaduna, Oyo..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-[#334E1B]/20 focus:border-[#334E1B] transition-all"
             />
           </div>
 
           {/* State Filter */}
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-            <select
+            <Dropdown
+              id="browse-produce-state-dropdown"
+              menuClassName="max-h-56 w-52"
+              options={[
+                { value: 'ALL', label: 'All Nigerian States' },
+                ...nigerianStates.filter(s => s !== 'ALL').map(s => ({
+                  value: s,
+                  label: `${s} State`,
+                })),
+              ]}
               value={selectedState}
-              onChange={e => setSelectedState(e.target.value)}
-              className="text-xs py-2 px-3 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-            >
-              <option value="ALL">All Nigerian States</option>
-              {nigerianStates.filter(s => s !== 'ALL').map(s => (
-                <option key={s} value={s}>{s} State</option>
-              ))}
-            </select>
+              onChange={val => setSelectedState(val)}
+            />
           </div>
 
           {/* Grade Filter */}
-          <select
+          <Dropdown
+            id="browse-produce-grade-dropdown"
+            menuClassName="w-48"
+            options={[
+              { value: 'ALL', label: 'All Quality Grades' },
+              { value: 'GRADE_A', label: 'Grade A (Premium)' },
+              { value: 'GRADE_B', label: 'Grade B (Standard)' },
+              { value: 'EXPORT_PREMIUM', label: 'Export Premium' },
+            ]}
             value={selectedGrade}
-            onChange={e => setSelectedGrade(e.target.value)}
-            className="text-xs py-2 px-3 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-          >
-            <option value="ALL">All Quality Grades</option>
-            <option value="GRADE_A">Grade A (Premium)</option>
-            <option value="GRADE_B">Grade B (Standard)</option>
-            <option value="EXPORT_PREMIUM">Export Premium</option>
-          </select>
+            onChange={val => setSelectedGrade(val)}
+          />
         </div>
 
         {/* Category Pills */}
@@ -138,7 +144,7 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 selectedCategory === cat
-                  ? 'bg-emerald-700 text-white shadow-xs'
+                  ? 'bg-[#334E1B] text-white shadow-xs'
                   : 'bg-slate-100 hover:bg-slate-200/70 text-slate-600'
               }`}
             >
@@ -164,7 +170,7 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
             return (
               <div
                 key={listing.id}
-                className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-emerald-500/40 transition-all flex flex-col overflow-hidden group"
+                className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-[#334E1B] transition-all flex flex-col overflow-hidden group"
               >
                 {/* Photo & Badge */}
                 <div className="h-44 relative bg-slate-100 overflow-hidden">
@@ -177,7 +183,7 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
                     <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-950/70 text-white backdrop-blur-xs">
                       {listing.qualityGrade.replace(/_/g, ' ')}
                     </span>
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-600/90 text-white backdrop-blur-xs">
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#3F6B24] text-white backdrop-blur-xs">
                       {listing.category}
                     </span>
                   </div>
@@ -192,7 +198,7 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
                   <div>
                     {/* Price Header */}
                     <div className="flex items-baseline justify-between gap-2">
-                      <div className="text-lg font-black text-emerald-800">
+                      <div className="text-lg font-black text-[#334E1B]">
                         ₦{(listing.pricePerUnit || 0).toLocaleString()}{' '}
                         <span className="text-xs font-normal text-slate-500">/ {listing.unit}</span>
                       </div>
@@ -219,7 +225,7 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
                         <span>{listing.lga}, {listing.state} State</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Truck className="w-3 h-3 text-blue-500" />
+                        <Truck className="w-3 h-3 text-[#3F6B24]" />
                         <span>{listing.deliveryCapability.replace(/_/g, ' ')}</span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -265,7 +271,7 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
                       <button
                         type="button"
                         onClick={() => onOpenNegotiation(listing)}
-                        className="py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                        className="py-2 px-3 rounded-xl bg-[#334E1B] hover:bg-[#3F6B24] text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
                       >
                         <DollarSign className="w-3.5 h-3.5" />
                         <span>Make Offer</span>

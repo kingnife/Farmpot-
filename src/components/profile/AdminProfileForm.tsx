@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldCheck, Lock, Award, KeyRound, PhoneCall, Building2, Bell, CheckCircle2 } from 'lucide-react';
 import { User } from '../../types';
+import { Dropdown } from '../common/Dropdown';
 
 interface AdminProfileFormProps {
   formData: Partial<User>;
@@ -22,33 +23,35 @@ export const AdminProfileForm: React.FC<AdminProfileFormProps> = ({ formData, on
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Department Assignment
             </label>
-            <select
+            <Dropdown
+              id="admin-profile-dept-dropdown"
+              options={[
+                { value: 'EXECUTIVE', label: 'Executive Oversight & Compliance' },
+                { value: 'ESCROW_SETTLEMENTS', label: 'Escrow Vault & Financial Settlements' },
+                { value: 'TRUST_VERIFICATION', label: 'Trust & Identity Verification Bureau' },
+                { value: 'DISPUTE_TRIBUNAL', label: 'Dispute Resolution Tribunal' },
+                { value: 'OPERATIONS', label: 'Operations & Logistics Oversight' },
+              ]}
               value={formData.department || 'EXECUTIVE'}
-              onChange={e => onChange({ department: e.target.value as any })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              <option value="EXECUTIVE">Executive Oversight & Compliance</option>
-              <option value="ESCROW_SETTLEMENTS">Escrow Vault & Financial Settlements</option>
-              <option value="TRUST_VERIFICATION">Trust & Identity Verification Bureau</option>
-              <option value="DISPUTE_TRIBUNAL">Dispute Resolution Tribunal</option>
-              <option value="OPERATIONS">Operations & Logistics Oversight</option>
-            </select>
+              onChange={val => onChange({ department: val as any })}
+            />
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Staff Clearance Tier
             </label>
-            <select
+            <Dropdown
+              id="admin-profile-clearance-dropdown"
+              options={[
+                { value: 'TIER_4_MASTER', label: 'Tier 4: Master Custodian (Full Authority)' },
+                { value: 'TIER_3', label: 'Tier 3: Senior Auditor (Dispute Arbitration)' },
+                { value: 'TIER_2', label: 'Tier 2: Verification Officer (KYC)' },
+                { value: 'TIER_1', label: 'Tier 1: Read-Only Compliance Analyst' },
+              ]}
               value={formData.clearanceLevel || 'TIER_4_MASTER'}
-              onChange={e => onChange({ clearanceLevel: e.target.value as any })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              <option value="TIER_4_MASTER">Tier 4: Master Custodian (Full Escrow & User Authority)</option>
-              <option value="TIER_3">Tier 3: Senior Auditor (Dispute Arbitration & Approvals)</option>
-              <option value="TIER_2">Tier 2: Verification Officer (KYC & Documents)</option>
-              <option value="TIER_1">Tier 1: Read-Only Compliance Analyst</option>
-            </select>
+              onChange={val => onChange({ clearanceLevel: val as any })}
+            />
           </div>
 
           <div>

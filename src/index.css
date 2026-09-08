@@ -1,13 +1,84 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #334E1B;
+  --color-primary-hover: #3F6B24;
+  --color-secondary: #3F6B24;
+  --color-light-green: #EDFFE0;
+  --color-app-bg: #EAEAE2;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #1F1F1F;
+  --color-text-secondary: #777777;
+
+  --color-farmpot-primary: #334E1B;
+  --color-farmpot-secondary: #3F6B24;
+  --color-farmpot-light: #EDFFE0;
+  --color-farmpot-bg: #EAEAE2;
+  --color-farmpot-surface: #FFFFFF;
+  --color-farmpot-text: #1F1F1F;
+  --color-farmpot-muted: #777777;
+}
+
+:root {
+  --color-primary: #334E1B;
+  --color-secondary: #3F6B24;
+  --color-light-green: #EDFFE0;
+  --color-background: #EAEAE2;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #1F1F1F;
+  --color-text-secondary: #777777;
+  --color-border-subtle: #D8D8CF;
+}
+
 @layer base {
   html {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #EAEAE2;
+    color: #1F1F1F;
+  }
+
+  body {
+    background-color: #EAEAE2;
+    color: #1F1F1F;
   }
 
   code, kbd, samp, pre {
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
+}
+
+/* FarmPot Button & Surface Tokens */
+.btn-farmpot-primary,
+.btn-primary {
+  background-color: #334E1B;
+  color: #FFFFFF;
+  transition: all 0.15s ease-in-out;
+}
+.btn-farmpot-primary:hover,
+.btn-primary:hover {
+  background-color: #3F6B24;
+}
+.btn-farmpot-primary:disabled,
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-farmpot-secondary,
+.btn-secondary {
+  background-color: #FFFFFF;
+  border: 1.5px solid #334E1B;
+  color: #334E1B;
+  transition: all 0.15s ease-in-out;
+}
+.btn-farmpot-secondary:hover,
+.btn-secondary:hover {
+  background-color: #EDFFE0;
+}
+
+.farmpot-card {
+  background-color: #FFFFFF;
+  border: 1px solid #D8D8CF;
 }
 
 /* Custom Sleek Scrollbar */
@@ -28,3 +99,4 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+

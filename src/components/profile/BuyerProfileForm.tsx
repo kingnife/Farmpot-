@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Building2, DollarSign, PackageCheck, MapPin, Warehouse, Plus, X, Landmark, ShieldCheck } from 'lucide-react';
 import { User } from '../../types';
 import { COMMODITY_SUGGESTIONS, NIGERIAN_BANKS } from '../../data/nigeriaGeography';
+import { Dropdown } from '../common/Dropdown';
 
 interface BuyerProfileFormProps {
   formData: Partial<User>;
@@ -51,17 +52,18 @@ export const BuyerProfileForm: React.FC<BuyerProfileFormProps> = ({ formData, on
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Buyer / Enterprise Type
             </label>
-            <select
+            <Dropdown
+              id="buyer-profile-type-dropdown"
+              options={[
+                { value: 'PROCESSOR', label: 'Industrial Food Processor & Mill' },
+                { value: 'SUPERMARKET', label: 'Supermarket & Retail Grocery Chain' },
+                { value: 'WHOLESALER', label: 'Wholesale Commodity Merchant' },
+                { value: 'EXPORTER', label: 'Export Trading House' },
+                { value: 'HOTEL_RESTAURANT', label: 'Hotel, Restaurant & Catering (HoReCa)' },
+              ]}
               value={formData.buyerType || 'PROCESSOR'}
-              onChange={e => onChange({ buyerType: e.target.value as any })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              <option value="PROCESSOR">Industrial Food Processor & Mill</option>
-              <option value="SUPERMARKET">Supermarket & Retail Grocery Chain</option>
-              <option value="WHOLESALER">Wholesale Commodity Merchant</option>
-              <option value="EXPORTER">Export Trading House</option>
-              <option value="HOTEL_RESTAURANT">Hotel, Restaurant & Catering (HoReCa)</option>
-            </select>
+              onChange={val => onChange({ buyerType: val as any })}
+            />
           </div>
 
           <div>
@@ -101,16 +103,17 @@ export const BuyerProfileForm: React.FC<BuyerProfileFormProps> = ({ formData, on
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Preferred Quality Grade
             </label>
-            <select
+            <Dropdown
+              id="buyer-profile-grade-dropdown"
+              options={[
+                { value: 'EXPORT_PREMIUM', label: 'Export Premium (Highest Sort & Zero Defect)' },
+                { value: 'GRADE_A', label: 'Grade A (Standard Commercial Factory Grade)' },
+                { value: 'GRADE_B', label: 'Grade B (Bulk Secondary Processing Grade)' },
+                { value: 'ALL', label: 'All Grades (Flexible based on price index)' },
+              ]}
               value={formData.preferredQualityGrade || 'GRADE_A'}
-              onChange={e => onChange({ preferredQualityGrade: e.target.value as any })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              <option value="EXPORT_PREMIUM">Export Premium (Highest Sort & Zero Defect)</option>
-              <option value="GRADE_A">Grade A (Standard Commercial Factory Grade)</option>
-              <option value="GRADE_B">Grade B (Bulk Secondary Processing Grade)</option>
-              <option value="ALL">All Grades (Flexible based on price index)</option>
-            </select>
+              onChange={val => onChange({ preferredQualityGrade: val as any })}
+            />
           </div>
 
           <div className="sm:col-span-2">
@@ -285,15 +288,16 @@ export const BuyerProfileForm: React.FC<BuyerProfileFormProps> = ({ formData, on
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Settlement Bank
             </label>
-            <select
+            <Dropdown
+              id="buyer-profile-bank-dropdown"
+              menuClassName="max-h-56"
+              options={NIGERIAN_BANKS.map(bank => ({
+                value: bank,
+                label: bank,
+              }))}
               value={formData.bankName || NIGERIAN_BANKS[0]}
-              onChange={e => onChange({ bankName: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              {NIGERIAN_BANKS.map(bank => (
-                <option key={bank} value={bank}>{bank}</option>
-              ))}
-            </select>
+              onChange={val => onChange({ bankName: val })}
+            />
           </div>
 
           <div>

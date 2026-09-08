@@ -10,7 +10,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
   const getStatusConfig = (s: string) => {
     const norm = s.toUpperCase().replace(/\s+/g, '_');
     switch (norm) {
-      // Verification
+      // Success & Approved States
       case 'VERIFIED':
       case 'APPROVED':
       case 'COMPLETED':
@@ -19,8 +19,14 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
       case 'FUNDS_HELD':
       case 'RELEASED_TO_FARMER':
       case 'PUBLISHED':
-        return { bg: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500' };
+      case 'ACTIVE':
+      case 'DELIVERED':
+      case 'ORDER_CREATED':
+      case 'AGREEMENT':
+      case 'AVAILABLE_JOB':
+        return { bg: 'bg-[#EDFFE0] text-[#334E1B] border-[#BEE7A5]', dot: 'bg-[#334E1B]' };
 
+      // Warning & Pending States
       case 'UNDER_REVIEW':
       case 'SUBMITTED':
       case 'PENDING':
@@ -35,14 +41,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
       case 'IN_TRANSIT':
       case 'QUALITY_PENDING':
       case 'WAITING_FOR_RESPONSE':
-        return { bg: 'bg-amber-50 text-amber-700 border-amber-200', dot: 'bg-amber-500' };
+        return { bg: 'bg-[#FEF3C7] text-[#B45309] border-[#FDE68A]', dot: 'bg-[#D97706]' };
 
-      case 'ORDER_CREATED':
-      case 'AGREEMENT':
-      case 'AVAILABLE_JOB':
-      case 'ACTIVE':
-        return { bg: 'bg-blue-50 text-blue-700 border-blue-200', dot: 'bg-blue-500' };
-
+      // Error & Failed States
       case 'REJECTED':
       case 'CANCELLED':
       case 'DISPUTED':
@@ -50,8 +51,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
       case 'FAILED':
       case 'PAYMENT_FAILED':
       case 'DELIVERY_FAILED':
-        return { bg: 'bg-rose-50 text-rose-700 border-rose-200', dot: 'bg-rose-500' };
+        return { bg: 'bg-[#FEE2E2] text-[#DC2626] border-[#FECACA]', dot: 'bg-[#DC2626]' };
 
+      // Neutral / Draft States
       case 'DRAFT':
       case 'PAUSED':
       case 'NOT_VERIFIED':
@@ -60,7 +62,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', s
       case 'REFUNDED':
       case 'REFUNDED_TO_BUYER':
       default:
-        return { bg: 'bg-slate-100 text-slate-700 border-slate-200', dot: 'bg-slate-400' };
+        return { bg: 'bg-stone-100 text-stone-700 border-stone-200', dot: 'bg-stone-400' };
     }
   };
 

@@ -3,6 +3,7 @@ import { DollarSign, ShieldCheck, Truck, Sparkles, FileCheck, CheckCircle2 } fro
 import { useApp } from '../../context/AppContext';
 import { Listing, DemandRequest } from '../../types';
 import { Modal } from '../common/Modal';
+import { Dropdown } from '../common/Dropdown';
 
 interface NegotiationModalProps {
   isOpen: boolean;
@@ -134,15 +135,16 @@ export const NegotiationModal: React.FC<NegotiationModalProps> = ({
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Quality Grade Specification *</label>
-            <select
+            <Dropdown
+              id="modal-negotiate-grade-dropdown"
+              options={[
+                { value: 'GRADE_A', label: 'Grade A (Premium High Brix)' },
+                { value: 'GRADE_B', label: 'Grade B (Standard Commercial)' },
+                { value: 'EXPORT_PREMIUM', label: 'Export Premium' },
+              ]}
               value={qualityGrade}
-              onChange={e => setQualityGrade(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="GRADE_A">Grade A (Premium High Brix)</option>
-              <option value="GRADE_B">Grade B (Standard Commercial)</option>
-              <option value="EXPORT_PREMIUM">Export Premium</option>
-            </select>
+              onChange={val => setQualityGrade(val as any)}
+            />
           </div>
         </div>
 
@@ -150,28 +152,40 @@ export const NegotiationModal: React.FC<NegotiationModalProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block font-bold text-slate-700 mb-1">Logistics / Delivery Terms *</label>
-            <select
+            <Dropdown
+              id="modal-negotiate-delivery-terms-dropdown"
+              options={[
+                {
+                  value: 'DESTINATION_DELIVERED',
+                  label: 'Destination Delivered (FarmPot Transporter Network)',
+                },
+                {
+                  value: 'FARM_GATE_PICKUP',
+                  label: 'Farm Gate Pickup (Buyer Self-Arranged)',
+                },
+              ]}
               value={deliveryTerms}
-              onChange={e => setDeliveryTerms(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="DESTINATION_DELIVERED">
-                Destination Delivered (FarmPot Transporter Network)
-              </option>
-              <option value="FARM_GATE_PICKUP">Farm Gate Pickup (Buyer Self-Arranged)</option>
-            </select>
+              onChange={val => setDeliveryTerms(val as any)}
+            />
           </div>
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Escrow Payment Terms *</label>
-            <select
+            <Dropdown
+              id="modal-negotiate-payment-terms-dropdown"
+              options={[
+                {
+                  value: 'FULL_ESCROW',
+                  label: '100% Locked in Escrow Vault (Recommended)',
+                },
+                {
+                  value: 'DEPOSIT_50_BALANCE_ON_DELIVERY',
+                  label: '50% Deposit + 50% on Quality Confirmation',
+                },
+              ]}
               value={paymentTerms}
-              onChange={e => setPaymentTerms(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="FULL_ESCROW">100% Locked in Escrow Vault (Recommended)</option>
-              <option value="DEPOSIT_50_BALANCE_ON_DELIVERY">50% Deposit + 50% on Quality Confirmation</option>
-            </select>
+              onChange={val => setPaymentTerms(val as any)}
+            />
           </div>
         </div>
 

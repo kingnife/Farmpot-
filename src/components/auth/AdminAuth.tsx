@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AuthPageView } from '../../types';
+import { Dropdown } from '../common/Dropdown';
 
 interface AdminAuthProps {
   initialView?: AuthPageView;
@@ -381,17 +382,18 @@ export const AdminAuth: React.FC<AdminAuthProps> = ({
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Assigned Department / Bureau *
                   </label>
-                  <select
+                  <Dropdown
+                    id="admin-auth-department-dropdown"
+                    options={[
+                      { value: 'ESCROW_VAULT', label: 'Escrow Vault & Settlement Treasury' },
+                      { value: 'VERIFICATION_OFFICE', label: 'KYC & Farmland Verification Bureau' },
+                      { value: 'DISPUTE_ARBITRATION', label: 'Commercial Dispute Resolution Tribunal' },
+                      { value: 'LOGISTICS_OVERSIGHT', label: 'Interstate Fleet & Logistics Control' },
+                      { value: 'COMMODITY_SURVEILLANCE', label: 'Commodity Surveillance & Anti-Gouging' },
+                    ]}
                     value={department}
-                    onChange={e => setDepartment(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 text-sm outline-none bg-white"
-                  >
-                    <option value="ESCROW_VAULT">Escrow Vault & Settlement Treasury</option>
-                    <option value="VERIFICATION_OFFICE">KYC & Farmland Verification Bureau</option>
-                    <option value="DISPUTE_ARBITRATION">Commercial Dispute Resolution Tribunal</option>
-                    <option value="LOGISTICS_OVERSIGHT">Interstate Fleet & Logistics Control</option>
-                    <option value="COMMODITY_SURVEILLANCE">Commodity Surveillance & Anti-Gouging</option>
-                  </select>
+                    onChange={val => setDepartment(val)}
+                  />
                 </div>
 
                 <div>

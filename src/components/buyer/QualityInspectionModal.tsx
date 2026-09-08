@@ -3,6 +3,7 @@ import { PackageCheck, ShieldAlert, CheckCircle2, AlertTriangle, Camera, DollarS
 import { useApp } from '../../context/AppContext';
 import { Order } from '../../types';
 import { Modal } from '../common/Modal';
+import { Dropdown } from '../common/Dropdown';
 
 interface QualityInspectionModalProps {
   isOpen: boolean;
@@ -108,16 +109,17 @@ export const QualityInspectionModal: React.FC<QualityInspectionModalProps> = ({
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Physical Quality Grade Tested *</label>
-            <select
+            <Dropdown
+              id="modal-inspection-actual-grade-dropdown"
+              options={[
+                { value: 'GRADE_A', label: 'Grade A (Meets Premium Spec)' },
+                { value: 'GRADE_B', label: 'Grade B (Standard Commercial)' },
+                { value: 'GRADE_C', label: 'Grade C (Sub-Standard / Processing Only)' },
+                { value: 'REJECTED', label: 'Rejected (Severe Spoilage / Failure)' },
+              ]}
               value={actualGrade}
-              onChange={e => setActualGrade(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="GRADE_A">Grade A (Meets Premium Specification)</option>
-              <option value="GRADE_B">Grade B (Standard Commercial)</option>
-              <option value="GRADE_C">Grade C (Sub-Standard / Processing Only)</option>
-              <option value="REJECTED">Rejected (Severe Spoilage / Failure)</option>
-            </select>
+              onChange={val => setActualGrade(val as any)}
+            />
           </div>
         </div>
 

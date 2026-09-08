@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PlusCircle, Sparkles, MapPin, Calendar, DollarSign, Package } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Modal } from '../common/Modal';
+import { Dropdown } from '../common/Dropdown';
 
 interface CreateDemandRequestModalProps {
   isOpen: boolean;
@@ -88,17 +89,18 @@ export const CreateDemandRequestModal: React.FC<CreateDemandRequestModalProps> =
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Category</label>
-            <select
+            <Dropdown
+              id="modal-demand-category-dropdown"
+              options={[
+                { value: 'VEGETABLES', label: 'Vegetables (Tomatoes, Pepper, Onions)' },
+                { value: 'GRAINS', label: 'Grains (Maize, Sorghum, Millet, Rice)' },
+                { value: 'TUBERS', label: 'Tubers (Cassava, Yam, Potatoes)' },
+                { value: 'OIL_SEEDS', label: 'Oil Seeds & Legumes (Soybeans, Sesame)' },
+                { value: 'FRUITS', label: 'Fruits & Citrus' },
+              ]}
               value={category}
-              onChange={e => setCategory(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-            >
-              <option value="VEGETABLES">Vegetables (Tomatoes, Pepper, Onions)</option>
-              <option value="GRAINS">Grains (Maize, Sorghum, Millet, Rice)</option>
-              <option value="TUBERS">Tubers (Cassava, Yam, Potatoes)</option>
-              <option value="OIL_SEEDS">Oil Seeds & Legumes (Soybeans, Groundnut, Sesame)</option>
-              <option value="FRUITS">Fruits & Citrus</option>
-            </select>
+              onChange={val => setCategory(val as any)}
+            />
           </div>
         </div>
 
@@ -117,15 +119,16 @@ export const CreateDemandRequestModal: React.FC<CreateDemandRequestModalProps> =
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Quality Grade Required *</label>
-            <select
+            <Dropdown
+              id="modal-demand-quality-grade-dropdown"
+              options={[
+                { value: 'GRADE_A', label: 'Grade A (Firm, Unblemished, Industrial)' },
+                { value: 'GRADE_B', label: 'Grade B (Standard Commercial Grade)' },
+                { value: 'EXPORT_PREMIUM', label: 'Export Premium (EU / Global GAP)' },
+              ]}
               value={targetQualityGrade}
-              onChange={e => setTargetQualityGrade(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-            >
-              <option value="GRADE_A">Grade A (Firm, Unblemished, Industrial/Retail)</option>
-              <option value="GRADE_B">Grade B (Standard Commercial Grade)</option>
-              <option value="EXPORT_PREMIUM">Export Premium (EU / Global GAP Standard)</option>
-            </select>
+              onChange={val => setTargetQualityGrade(val as any)}
+            />
           </div>
         </div>
 
@@ -145,17 +148,18 @@ export const CreateDemandRequestModal: React.FC<CreateDemandRequestModalProps> =
 
           <div>
             <label className="block font-bold text-slate-700 mb-1">Unit of Measure *</label>
-            <select
+            <Dropdown
+              id="modal-demand-unit-dropdown"
+              options={[
+                { value: 'CRATE', label: 'Crates (approx. 25kg)' },
+                { value: 'BAG_50KG', label: '50kg Bags' },
+                { value: 'BAG_100KG', label: '100kg Bags' },
+                { value: 'TONNE', label: 'Metric Tonnes (1,000kg)' },
+                { value: 'KG', label: 'Kilograms (kg)' },
+              ]}
               value={unit}
-              onChange={e => setUnit(e.target.value as any)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-            >
-              <option value="CRATE">Crates (approx. 25kg)</option>
-              <option value="BAG_50KG">50kg Bags</option>
-              <option value="BAG_100KG">100kg Bags</option>
-              <option value="TONNE">Metric Tonnes (1,000kg)</option>
-              <option value="KG">Kilograms (kg)</option>
-            </select>
+              onChange={val => setUnit(val as any)}
+            />
           </div>
 
           <div>
@@ -243,16 +247,18 @@ export const CreateDemandRequestModal: React.FC<CreateDemandRequestModalProps> =
 
         {isRecurring && (
           <div className="p-3 rounded-xl bg-teal-50 border border-teal-200 flex items-center gap-3">
-            <span className="font-semibold text-teal-900">Frequency:</span>
-            <select
+            <span className="font-semibold text-teal-900 shrink-0">Frequency:</span>
+            <Dropdown
+              id="modal-demand-frequency-dropdown"
+              options={[
+                { value: 'WEEKLY', label: 'Weekly Delivery' },
+                { value: 'BIWEEKLY', label: 'Bi-Weekly Delivery' },
+                { value: 'MONTHLY', label: 'Monthly Delivery' },
+              ]}
               value={recurringFrequency}
-              onChange={e => setRecurringFrequency(e.target.value as any)}
-              className="px-2.5 py-1.5 rounded-lg border border-teal-300 bg-white text-xs"
-            >
-              <option value="WEEKLY">Weekly Delivery</option>
-              <option value="BIWEEKLY">Bi-Weekly Delivery</option>
-              <option value="MONTHLY">Monthly Delivery</option>
-            </select>
+              onChange={val => setRecurringFrequency(val as any)}
+              className="flex-1"
+            />
           </div>
         )}
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   PackageCheck,
   Lock,
@@ -17,7 +17,12 @@ import {
   FileCheck2,
   Phone,
   ShieldAlert,
-  ArrowLeft
+  ArrowLeft,
+  Search,
+  RotateCcw,
+  SlidersHorizontal,
+  MessageSquare,
+  ChevronDown
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Order, OrderStatus } from '../../types';
@@ -25,6 +30,7 @@ import { StatusBadge } from '../common/StatusBadge';
 import { TrustScoreBadge } from '../common/TrustScoreBadge';
 import { QualityInspectionModal } from './QualityInspectionModal';
 import { DigitalWaybillModal } from '../logistics/DigitalWaybillModal';
+import { Dropdown } from '../common/Dropdown';
 
 export const BuyerOrders: React.FC = () => {
   const {
@@ -36,25 +42,155 @@ export const BuyerOrders: React.FC = () => {
     submitReview,
     users,
     setActiveView,
+    startOrOpenConversation,
   } = useApp();
 
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [productFilter, setProductFilter] = useState<string>('ALL');
+  const [supplierFilter, setSupplierFilter] = useState<string>('ALL');
+  const [locationFilter, setLocationFilter] = useState<string>('ALL');
+  const [deliveryFilter, setDeliveryFilter] = useState<string>('ALL');
+  const [sortBy, setSortBy] = useState<string>('NEWEST');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
   const [isInspectionOpen, setIsInspectionOpen] = useState(false);
   const [isWaybillOpen, setIsWaybillOpen] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [rating, setRating] = useState<number>(5);
   const [reviewComment, setReviewComment] = useState('Excellent high-brix Roma tomatoes. Exactly as specified in contract, cold-chain arrived intact.');
 
-  const buyerOrders = (orders || []).filter(
-    o => o.buyerId === currentUser?.id || currentUser?.role === 'ADMIN'
-  );
+  const buyerOrders = useMemo(() => {
+    return (orders || []).filter(
+      o => o.buyerId === currentUser?.id || currentUser?.role === 'ADMIN'
+    );
+  }, [orders, currentUser]);
 
-  const selectedOrder = (orders || []).find(o => o.id === selectedOrderId) || buyerOrders[0];
+  // Derived filter options
+  const productOptions = useMemo(() => [
+    { value: 'ALL', label: 'All Commodities' },
+    ...Array.from(new Set(buyerOrders.map(o => o.product))).map(p => ({
+      value: p,
+      label: p,
+      badge: `${buyerOrders.filter(o => o.product === p).length}`,
+    })),
+  ], [buyerOrders]);
 
-  const filteredOrders = buyerOrders.filter(o => {
-    if (statusFilter === 'ALL') return true;
-    return o.status === statusFilter;
-  });
+  const supplierOptions = useMemo(() => [
+    { value: 'ALL', label: 'All Suppliers' },
+    ...Array.from(new Set(buyerOrders.map(o => o.supplierName))).map(s => ({
+      value: s,
+      label: s,
+      badge: `${buyerOrders.filter(o => o.supplierName === s).length}`,
+    })),
+  ], [buyerOrders]);
+
+  const locationOptions = useMemo(() => {
+    const states = Array.from(
+      new Set(buyerOrders.map(o => o.destinationState || o.supplierState).filter(Boolean))
+    );
+    return [
+      { value: 'ALL', label: 'All Locations' },
+      ...states.map(st => ({
+        value: st as string,
+        label: `${st} State`,
+      })),
+    ];
+  }, [buyerOrders]);
+
+  const statusOptions = [
+    { value: 'ALL', label: 'All Statuses' },
+    { value: 'PAYMENT_PENDING', label: 'Payment Pending', badge: 'Deposit' },
+    { value: 'ESCROW_HELD', label: 'Escrow Held / Locked', badge: 'Vault' },
+    { value: 'TRANSPORTER_ASSIGNED', label: 'Transporter Assigned', badge: 'Haulage' },
+    { value: 'IN_TRANSIT', label: 'In Transit', badge: 'En Route' },
+    { value: 'DELIVERED', label: 'Delivered', badge: 'Destination' },
+    { value: 'ACCEPTED', label: 'Quality Accepted', badge: 'Inspected' },
+    { value: 'COMPLETED', label: 'Settled & Completed', badge: 'Released' },
+    { value: 'DISPUTED', label: 'Disputed', badge: 'Tribunal' },
+  ];
+
+  const deliveryOptions = [
+    { value: 'ALL', label: 'All Delivery Terms' },
+    { value: 'DESTINATION_DELIVERED', label: 'Destination Delivered' },
+    { value: 'FARM_GATE_PICKUP', label: 'Farm Gate Pickup' },
+  ];
+
+  const sortOptions = [
+    { value: 'NEWEST', label: 'Date: Newest First' },
+    { value: 'OLDEST', label: 'Date: Oldest First' },
+    { value: 'VALUE_HIGH', label: 'Value: High to Low' },
+    { value: 'VALUE_LOW', label: 'Value: Low to High' },
+    { value: 'QTY_HIGH', label: 'Quantity: High to Low' },
+  ];
+
+  const isFiltered =
+    statusFilter !== 'ALL' ||
+    productFilter !== 'ALL' ||
+    supplierFilter !== 'ALL' ||
+    locationFilter !== 'ALL' ||
+    deliveryFilter !== 'ALL' ||
+    sortBy !== 'NEWEST' ||
+    searchQuery.trim() !== '';
+
+  const handleResetFilters = () => {
+    setStatusFilter('ALL');
+    setProductFilter('ALL');
+    setSupplierFilter('ALL');
+    setLocationFilter('ALL');
+    setDeliveryFilter('ALL');
+    setSortBy('NEWEST');
+    setSearchQuery('');
+  };
+
+  const filteredOrders = useMemo(() => {
+    let list = buyerOrders.filter(o => {
+      if (statusFilter !== 'ALL' && o.status !== statusFilter) return false;
+      if (productFilter !== 'ALL' && o.product !== productFilter) return false;
+      if (supplierFilter !== 'ALL' && o.supplierName !== supplierFilter) return false;
+      if (
+        locationFilter !== 'ALL' &&
+        o.destinationState !== locationFilter &&
+        o.supplierState !== locationFilter
+      ) {
+        return false;
+      }
+      if (deliveryFilter !== 'ALL' && o.deliveryTerms !== deliveryFilter) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const match =
+          o.id.toLowerCase().includes(q) ||
+          o.product.toLowerCase().includes(q) ||
+          o.supplierName.toLowerCase().includes(q) ||
+          (o.destinationState && o.destinationState.toLowerCase().includes(q));
+        if (!match) return false;
+      }
+      return true;
+    });
+
+    return list.sort((a, b) => {
+      if (sortBy === 'NEWEST') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sortBy === 'OLDEST') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sortBy === 'VALUE_HIGH') return (b.grandTotalNGN || 0) - (a.grandTotalNGN || 0);
+      if (sortBy === 'VALUE_LOW') return (a.grandTotalNGN || 0) - (b.grandTotalNGN || 0);
+      if (sortBy === 'QTY_HIGH') return (b.quantity || 0) - (a.quantity || 0);
+      return 0;
+    });
+  }, [
+    buyerOrders,
+    statusFilter,
+    productFilter,
+    supplierFilter,
+    locationFilter,
+    deliveryFilter,
+    sortBy,
+    searchQuery,
+  ]);
+
+  const selectedOrder =
+    filteredOrders.find(o => o.id === selectedOrderId) ||
+    buyerOrders.find(o => o.id === selectedOrderId) ||
+    filteredOrders[0] ||
+    buyerOrders[0];
 
   const handlePayEscrow = (order: Order) => {
     processPayment(order.id, 'ESCROW_WALLET', order.grandTotalNGN);
@@ -107,22 +243,213 @@ export const BuyerOrders: React.FC = () => {
           </p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-          {['ALL', 'ESCROW_HELD', 'IN_TRANSIT', 'DELIVERED', 'COMPLETED', 'DISPUTED'].map(st => (
+        {/* Live Filter Counter */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-slate-600 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+            Showing <strong className="text-[#334E1B] font-bold">{filteredOrders.length}</strong> of {buyerOrders.length} orders
+          </span>
+          {isFiltered && (
             <button
-              key={st}
               type="button"
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                statusFilter === st
-                  ? 'bg-emerald-700 text-white shadow-xs'
-                  : 'bg-white hover:bg-slate-100 border border-slate-200 text-slate-600'
-              }`}
+              onClick={handleResetFilters}
+              className="text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              {st.replace(/_/g, ' ')}
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Filters</span>
             </button>
-          ))}
+          )}
+        </div>
+      </div>
+
+      {/* Procurement Interactive Filter Bar with Dropdowns */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-3 shadow-2xs space-y-3">
+        {/* Top row: Search + Primary Dropdowns */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Search Bar */}
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search by Order ID, commodity, supplier, state..."
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#334E1B] focus:bg-white transition-all"
+            />
+          </div>
+
+          {/* Status Dropdown */}
+          <Dropdown
+            id="procurement-status-filter"
+            align="left"
+            menuClassName="w-60"
+            trigger={isOpen => (
+              <div
+                role="button"
+                tabIndex={0}
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                  statusFilter !== 'ALL'
+                    ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
+                    : isOpen
+                    ? 'bg-slate-100 border-slate-300 text-slate-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                }`}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400" />
+                <span className="truncate max-w-[120px]">
+                  {statusOptions.find(o => o.value === statusFilter)?.label || 'Status'}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+              </div>
+            )}
+            options={statusOptions}
+            value={statusFilter}
+            onChange={setStatusFilter}
+          />
+
+          {/* Commodity / Product Dropdown */}
+          <Dropdown
+            id="procurement-product-filter"
+            align="left"
+            menuClassName="w-56"
+            trigger={isOpen => (
+              <div
+                role="button"
+                tabIndex={0}
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                  productFilter !== 'ALL'
+                    ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
+                    : isOpen
+                    ? 'bg-slate-100 border-slate-300 text-slate-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                }`}
+              >
+                <span>Commodity:</span>
+                <span className="truncate max-w-[100px] font-bold">
+                  {productOptions.find(o => o.value === productFilter)?.label || 'All'}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+              </div>
+            )}
+            options={productOptions}
+            value={productFilter}
+            onChange={setProductFilter}
+          />
+
+          {/* Supplier Dropdown */}
+          <Dropdown
+            id="procurement-supplier-filter"
+            align="left"
+            menuClassName="w-60"
+            trigger={isOpen => (
+              <div
+                role="button"
+                tabIndex={0}
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                  supplierFilter !== 'ALL'
+                    ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
+                    : isOpen
+                    ? 'bg-slate-100 border-slate-300 text-slate-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                }`}
+              >
+                <span>Supplier:</span>
+                <span className="truncate max-w-[110px] font-bold">
+                  {supplierOptions.find(o => o.value === supplierFilter)?.label || 'All'}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+              </div>
+            )}
+            options={supplierOptions}
+            value={supplierFilter}
+            onChange={setSupplierFilter}
+          />
+
+          {/* Location Dropdown */}
+          <Dropdown
+            id="procurement-location-filter"
+            align="left"
+            menuClassName="w-56"
+            trigger={isOpen => (
+              <div
+                role="button"
+                tabIndex={0}
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                  locationFilter !== 'ALL'
+                    ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
+                    : isOpen
+                    ? 'bg-slate-100 border-slate-300 text-slate-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                }`}
+              >
+                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                <span className="truncate max-w-[100px]">
+                  {locationOptions.find(o => o.value === locationFilter)?.label || 'Location'}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+              </div>
+            )}
+            options={locationOptions}
+            value={locationFilter}
+            onChange={setLocationFilter}
+          />
+
+          {/* Delivery Terms Dropdown */}
+          <Dropdown
+            id="procurement-delivery-filter"
+            align="right"
+            menuClassName="w-64"
+            trigger={isOpen => (
+              <div
+                role="button"
+                tabIndex={0}
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                  deliveryFilter !== 'ALL'
+                    ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
+                    : isOpen
+                    ? 'bg-slate-100 border-slate-300 text-slate-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                }`}
+              >
+                <Truck className="w-3.5 h-3.5 text-slate-400" />
+                <span className="truncate max-w-[120px]">
+                  {deliveryOptions.find(o => o.value === deliveryFilter)?.label || 'Logistics'}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+              </div>
+            )}
+            options={deliveryOptions}
+            value={deliveryFilter}
+            onChange={setDeliveryFilter}
+          />
+
+          {/* Sort By Dropdown */}
+          <Dropdown
+            id="procurement-sort-by-filter"
+            align="right"
+            menuClassName="w-56"
+            trigger={isOpen => (
+              <div
+                role="button"
+                tabIndex={0}
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                  sortBy !== 'NEWEST'
+                    ? 'bg-slate-100 border-slate-300 text-slate-900 font-bold'
+                    : isOpen
+                    ? 'bg-slate-100 border-slate-300 text-slate-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                }`}
+              >
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                <span className="truncate max-w-[110px]">
+                  {sortOptions.find(o => o.value === sortBy)?.label || 'Sort'}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+              </div>
+            )}
+            options={sortOptions}
+            value={sortBy}
+            onChange={setSortBy}
+          />
         </div>
       </div>
 
@@ -210,14 +537,130 @@ export const BuyerOrders: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="text-right">
-                  <div className="text-xs text-slate-500">Total Escrow Value</div>
-                  <div className="text-2xl font-black text-emerald-800">
-                    ₦{(selectedOrder.grandTotalNGN || selectedOrder.produceTotalNGN || 0).toLocaleString()} NGN
+                <div className="flex flex-col items-end gap-2">
+                  <div className="text-right">
+                    <div className="text-xs text-slate-500">Total Escrow Value</div>
+                    <div className="text-2xl font-black text-emerald-800">
+                      ₦{(selectedOrder.grandTotalNGN || selectedOrder.produceTotalNGN || 0).toLocaleString()} NGN
+                    </div>
+                    <div className="text-[11px] text-slate-400">
+                      {(selectedOrder.quantity || 0).toLocaleString()} {selectedOrder.unit} @ ₦{(selectedOrder.pricePerUnit || 0).toLocaleString()}/{selectedOrder.unit}
+                    </div>
                   </div>
-                  <div className="text-[11px] text-slate-400">
-                    {(selectedOrder.quantity || 0).toLocaleString()} {selectedOrder.unit} @ ₦{(selectedOrder.pricePerUnit || 0).toLocaleString()}/{selectedOrder.unit}
-                  </div>
+
+                  {/* Order Actions Dropdown Menu */}
+                  <Dropdown
+                    id={`order-actions-dropdown-${selectedOrder.id}`}
+                    align="right"
+                    menuClassName="w-64 p-1.5"
+                    trigger={isOpen => (
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                          isOpen
+                            ? 'bg-slate-100 border-slate-300 text-slate-900 ring-2 ring-slate-200'
+                            : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                        }`}
+                      >
+                        <FileText className="w-3.5 h-3.5 text-[#334E1B]" />
+                        <span>Order Options</span>
+                        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                    )}
+                  >
+                    {({ close }) => (
+                      <div className="space-y-1">
+                        <div className="px-3 py-1 text-[10px] uppercase font-bold text-[#777777] border-b border-slate-100">
+                          Order Operations
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsWaybillOpen(true);
+                            close();
+                          }}
+                          className="w-full px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center gap-2 hover:bg-slate-50 cursor-pointer text-slate-800"
+                        >
+                          <FileCheck2 className="w-3.5 h-3.5 text-blue-600" />
+                          <span>Digital Waybill & Manifest</span>
+                        </button>
+
+                        {['DELIVERED', 'QUALITY_PENDING', 'IN_TRANSIT'].includes(selectedOrder.status) && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsInspectionOpen(true);
+                              close();
+                            }}
+                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center gap-2 hover:bg-[#EDFFE0] cursor-pointer text-[#334E1B]"
+                          >
+                            <PackageCheck className="w-3.5 h-3.5 text-[#334E1B]" />
+                            <span>Inspect Delivery & Quality</span>
+                          </button>
+                        )}
+
+                        {selectedOrder.status === 'PAYMENT_PENDING' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handlePayEscrow(selectedOrder);
+                              close();
+                            }}
+                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center gap-2 hover:bg-[#EDFFE0] cursor-pointer text-[#334E1B]"
+                          >
+                            <Lock className="w-3.5 h-3.5 text-[#334E1B]" />
+                            <span>Deposit Escrow Funds</span>
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            startOrOpenConversation({
+                              orderId: selectedOrder.id,
+                              targetUserId: selectedOrder.supplierId,
+                              targetUserName: selectedOrder.supplierName,
+                              title: `Order #${selectedOrder.id}: ${selectedOrder.product}`,
+                            });
+                            close();
+                          }}
+                          className="w-full px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center gap-2 hover:bg-slate-50 cursor-pointer text-slate-800"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Direct Message Supplier</span>
+                        </button>
+
+                        {selectedOrder.status === 'COMPLETED' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowReviewModal(true);
+                              close();
+                            }}
+                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center gap-2 hover:bg-amber-50 cursor-pointer text-amber-800"
+                          >
+                            <Star className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
+                            <span>Submit Supplier Review</span>
+                          </button>
+                        )}
+
+                        {!['COMPLETED', 'DISPUTED', 'CANCELLED'].includes(selectedOrder.status) && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsInspectionOpen(true);
+                              close();
+                            }}
+                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-semibold flex items-center gap-2 hover:bg-rose-50 cursor-pointer text-rose-700 border-t border-slate-100 mt-1 pt-2"
+                          >
+                            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+                            <span>Flag Defect / Raise Dispute</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </Dropdown>
                 </div>
               </div>
 

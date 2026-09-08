@@ -33,6 +33,7 @@ import { FarmerProfileForm } from '../profile/FarmerProfileForm';
 import { TransporterProfileForm } from '../profile/TransporterProfileForm';
 import { AdminProfileForm } from '../profile/AdminProfileForm';
 import { NIGERIAN_STATES, NIGERIAN_LGAS_BY_STATE } from '../../data/nigeriaGeography';
+import { Dropdown } from '../common/Dropdown';
 
 export const AdminUserDirectory: React.FC = () => {
   const {
@@ -191,29 +192,31 @@ export const AdminUserDirectory: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <select
+            <Dropdown
+              id="admin-users-role-filter-dropdown"
+              options={[
+                { value: 'ALL', label: `All Roles (${users.length})` },
+                { value: 'BUYER', label: `Buyers (${users.filter(u => u.role === 'BUYER').length})` },
+                { value: 'FARMER', label: `Farmers (${users.filter(u => u.role === 'FARMER').length})` },
+                { value: 'TRANSPORTER', label: `Transporters (${users.filter(u => u.role === 'TRANSPORTER').length})` },
+                { value: 'ADMIN', label: `Admins (${users.filter(u => u.role === 'ADMIN').length})` },
+              ]}
               value={roleFilter}
-              onChange={e => setRoleFilter(e.target.value)}
-              className="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-semibold focus:outline-none"
-            >
-              <option value="ALL">All Roles ({users.length})</option>
-              <option value="BUYER">Buyers ({users.filter(u => u.role === 'BUYER').length})</option>
-              <option value="FARMER">Farmers ({users.filter(u => u.role === 'FARMER').length})</option>
-              <option value="TRANSPORTER">Transporters ({users.filter(u => u.role === 'TRANSPORTER').length})</option>
-              <option value="ADMIN">Admins ({users.filter(u => u.role === 'ADMIN').length})</option>
-            </select>
+              onChange={val => setRoleFilter(val)}
+            />
 
-            <select
+            <Dropdown
+              id="admin-users-verification-filter-dropdown"
+              options={[
+                { value: 'ALL', label: 'All Verification Statuses' },
+                { value: 'VERIFIED', label: 'Verified Only' },
+                { value: 'UNDER_REVIEW', label: 'Under Review' },
+                { value: 'NOT_VERIFIED', label: 'Not Verified' },
+                { value: 'REJECTED', label: 'Rejected' },
+              ]}
               value={verificationFilter}
-              onChange={e => setVerificationFilter(e.target.value)}
-              className="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-semibold focus:outline-none"
-            >
-              <option value="ALL">All Verification Statuses</option>
-              <option value="VERIFIED">Verified Only</option>
-              <option value="UNDER_REVIEW">Under Review</option>
-              <option value="NOT_VERIFIED">Not Verified</option>
-              <option value="REJECTED">Rejected</option>
-            </select>
+              onChange={val => setVerificationFilter(val)}
+            />
           </div>
         </div>
 
@@ -394,16 +397,17 @@ export const AdminUserDirectory: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">Assigned Role</label>
-                    <select
+                    <Dropdown
+                      id="admin-edit-user-role-dropdown"
+                      options={[
+                        { value: 'BUYER', label: 'BUYER (Food Processor / Merchant)' },
+                        { value: 'FARMER', label: 'FARMER (Producer / Cooperative)' },
+                        { value: 'TRANSPORTER', label: 'TRANSPORTER (Haulage / Logistics)' },
+                        { value: 'ADMIN', label: 'ADMIN (Platform Custodian)' },
+                      ]}
                       value={editFormData.role || selectedUserForEdit.role}
-                      onChange={e => handleFieldChange({ role: e.target.value as UserRole })}
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                    >
-                      <option value="BUYER">BUYER (Food Processor / Merchant)</option>
-                      <option value="FARMER">FARMER (Producer / Cooperative)</option>
-                      <option value="TRANSPORTER">TRANSPORTER (Haulage / Logistics)</option>
-                      <option value="ADMIN">ADMIN (Platform Custodian)</option>
-                    </select>
+                      onChange={val => handleFieldChange({ role: val as UserRole })}
+                    />
                   </div>
 
                   <div>
@@ -428,19 +432,19 @@ export const AdminUserDirectory: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">State</label>
-                    <select
+                    <Dropdown
+                      id="admin-edit-user-state-dropdown"
+                      menuClassName="max-h-56"
+                      options={NIGERIAN_STATES.map(st => ({
+                        value: st,
+                        label: `${st} State`,
+                      }))}
                       value={editFormData.state || selectedUserForEdit.state}
-                      onChange={e => {
-                        const newState = e.target.value;
+                      onChange={newState => {
                         const defaultLgas = NIGERIAN_LGAS_BY_STATE[newState] || ['Central'];
                         handleFieldChange({ state: newState, lga: defaultLgas[0] || '' });
                       }}
-                      className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                    >
-                      {NIGERIAN_STATES.map(st => (
-                        <option key={st} value={st}>{st} State</option>
-                      ))}
-                    </select>
+                    />
                   </div>
                 </div>
               </div>

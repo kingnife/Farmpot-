@@ -68,7 +68,7 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-teal-500/20 text-teal-400 rounded-2xl border border-teal-500/30">
+          <div className="p-2.5 bg-[#EDFFE0]/20 text-[#EDFFE0] rounded-2xl border border-[#BEE7A5]/30">
             <Snowflake className="w-5 h-5 animate-spin-slow" />
           </div>
           <div>
@@ -76,7 +76,7 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
               <span>IoT Cold-Chain Telemetry</span>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                 isSafe
-                  ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/30'
+                  ? 'bg-[#EDFFE0]/20 text-[#EDFFE0] border-[#BEE7A5]/40'
                   : 'bg-rose-950/80 text-rose-400 border-rose-500/30'
               }`}>
                 {isSafe ? 'OPTIMAL SAFE ZONE' : 'TEMP EXCURSION WARNING'}
@@ -90,10 +90,10 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
 
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#EDFFE0] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#EDFFE0]" />
           </span>
-          <span className="text-[11px] font-mono text-teal-400">LIVE SENSORS SYNCED</span>
+          <span className="text-[11px] font-mono text-[#EDFFE0]">LIVE SENSORS SYNCED</span>
         </div>
       </div>
 
@@ -103,9 +103,9 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
         <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
           <div className="text-[11px] text-slate-400 font-bold uppercase flex items-center justify-between">
             <span>Cargo Cabin</span>
-            <Thermometer className="w-3.5 h-3.5 text-teal-400" />
+            <Thermometer className="w-3.5 h-3.5 text-[#EDFFE0]" />
           </div>
-          <div className="text-2xl font-black text-teal-400">
+          <div className="text-2xl font-black text-[#EDFFE0]">
             {currentTemp.toFixed(1)}°C
           </div>
           <div className="text-[10px] text-slate-500">
@@ -131,9 +131,9 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
         <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
           <div className="text-[11px] text-slate-400 font-bold uppercase flex items-center justify-between">
             <span>Humidity (RH)</span>
-            <Gauge className="w-3.5 h-3.5 text-sky-400" />
+            <Gauge className="w-3.5 h-3.5 text-[#BEE7A5]" />
           </div>
-          <div className="text-2xl font-black text-sky-400">
+          <div className="text-2xl font-black text-[#BEE7A5]">
             {logistics.humidityPercent || 84}%
           </div>
           <div className="text-[10px] text-slate-500">
@@ -145,9 +145,9 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
         <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1">
           <div className="text-[11px] text-slate-400 font-bold uppercase flex items-center justify-between">
             <span>Compressor</span>
-            <Zap className="w-3.5 h-3.5 text-emerald-400" />
+            <Zap className="w-3.5 h-3.5 text-[#EDFFE0]" />
           </div>
-          <div className="text-2xl font-black text-emerald-400">
+          <div className="text-2xl font-black text-[#EDFFE0]">
             100% ECO
           </div>
           <div className="text-[10px] text-slate-500">
@@ -160,20 +160,20 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
       <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-3">
         <div className="flex items-center justify-between text-xs text-slate-400">
           <span className="font-bold text-slate-300 flex items-center gap-1.5">
-            <Activity className="w-3.5 h-3.5 text-teal-400" />
+            <Activity className="w-3.5 h-3.5 text-[#EDFFE0]" />
             Temperature Log Over Journey (8h Transit Window)
           </span>
-          <span className="text-[11px] text-emerald-400 font-medium">0 Excursions Recorded</span>
+          <span className="text-[11px] text-[#EDFFE0] font-medium">0 Excursions Recorded</span>
         </div>
 
         {/* SVG Sparkline / Line Chart */}
         <div className="relative w-full h-28 bg-slate-900/60 rounded-xl p-2 flex items-center justify-center">
           {/* Safe Zone Background Band */}
           <div
-            className="absolute left-2 right-2 bg-teal-500/10 border-y border-teal-500/20 pointer-events-none"
+            className="absolute left-2 right-2 bg-[#334E1B]/30 border-y border-[#3F6B24]/40 pointer-events-none"
             style={{ top: '25%', height: '45%' }}
           >
-            <span className="absolute right-2 top-1 text-[9px] font-mono text-teal-400/80">
+            <span className="absolute right-2 top-1 text-[9px] font-mono text-[#EDFFE0]/90">
               Safe Band (8°C - 14°C)
             </span>
           </div>
@@ -188,7 +188,7 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
             <path
               d={pathD}
               fill="none"
-              stroke="#2dd4bf"
+              stroke="#BEE7A5"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -202,14 +202,14 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
                   cy={pt.y}
                   r="4"
                   fill="#0f172a"
-                  stroke="#2dd4bf"
+                  stroke="#BEE7A5"
                   strokeWidth="2"
                 />
                 <circle
                   cx={pt.x}
                   cy={pt.y}
                   r="8"
-                  fill="#2dd4bf"
+                  fill="#BEE7A5"
                   opacity="0"
                   className="group-hover:opacity-30 transition-opacity"
                 />
@@ -241,13 +241,13 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
 
       {/* Driver / Transporter Temperature Adjustment & Simulator */}
       {canEdit && (
-        <div className="p-4 rounded-2xl bg-teal-950/40 border border-teal-800/40 space-y-3">
+        <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-teal-300 flex items-center gap-1.5">
+            <span className="text-xs font-bold text-[#EDFFE0] flex items-center gap-1.5">
               <Sliders className="w-3.5 h-3.5" />
               Reefer Temperature Regulator (Transporter Controls)
             </span>
-            <span className="text-xs font-mono font-bold text-teal-400 bg-teal-900/60 px-2 py-0.5 rounded border border-teal-700/50">
+            <span className="text-xs font-mono font-bold text-[#EDFFE0] bg-[#334E1B] px-2 py-0.5 rounded border border-[#3F6B24]">
               Set Point: {sliderTemp.toFixed(1)}°C
             </span>
           </div>
@@ -261,7 +261,7 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
               step="0.2"
               value={sliderTemp}
               onChange={(e) => setSliderTemp(parseFloat(e.target.value))}
-              className="w-full accent-teal-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+              className="w-full accent-[#EDFFE0] cursor-pointer h-2 bg-slate-800 rounded-lg"
             />
             <span className="text-[11px] text-slate-400">24°C Ambient</span>
           </div>
@@ -270,7 +270,7 @@ export const ColdChainTelemetryCard: React.FC<ColdChainTelemetryCardProps> = ({
             <button
               type="button"
               onClick={handleApplyTemp}
-              className="px-4 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+              className="px-4 py-1.5 bg-[#334E1B] hover:bg-[#3F6B24] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
             >
               Sync Sensor to Cloud
             </button>

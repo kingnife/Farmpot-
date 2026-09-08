@@ -35,6 +35,7 @@ import { useApp } from '../../context/AppContext';
 import { StatusBadge } from '../common/StatusBadge';
 import { Order, UserRole } from '../../types';
 import { NIGERIAN_STATES } from '../../data/nigeriaGeography';
+import { Dropdown } from '../common/Dropdown';
 
 export const AdminAnalytics: React.FC = () => {
   const {
@@ -498,17 +499,18 @@ export const AdminAnalytics: React.FC = () => {
                   />
                 </div>
 
-                <select
+                <Dropdown
+                  id="admin-analytics-status-filter-dropdown"
+                  options={[
+                    { value: 'ALL', label: 'All Statuses' },
+                    { value: 'COMPLETED', label: 'Completed' },
+                    { value: 'ESCROW_HELD', label: 'Escrow Held' },
+                    { value: 'IN_TRANSIT', label: 'In Transit' },
+                    { value: 'DISPUTED', label: 'Disputed' },
+                  ]}
                   value={selectedStatusFilter}
-                  onChange={e => setSelectedStatusFilter(e.target.value)}
-                  className="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-900 font-semibold focus:outline-none"
-                >
-                  <option value="ALL">All Statuses</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="ESCROW_HELD">Escrow Held</option>
-                  <option value="IN_TRANSIT">In Transit</option>
-                  <option value="DISPUTED">Disputed</option>
-                </select>
+                  onChange={val => setSelectedStatusFilter(val)}
+                />
               </div>
             </div>
 

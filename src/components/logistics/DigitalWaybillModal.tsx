@@ -81,8 +81,8 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-6 border-b-2 border-slate-900">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-2xl font-black tracking-tight text-emerald-800">FarmPot</span>
-                <span className="text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
+                <span className="text-2xl font-black tracking-tight text-[#334E1B]">FarmPot</span>
+                <span className="text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#EDFFE0] text-[#334E1B] border border-[#BEE7A5]">
                   Agro-Transit Express
                 </span>
               </div>
@@ -108,7 +108,7 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Consignor */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="text-[11px] uppercase font-black tracking-wider text-emerald-800 flex items-center gap-1.5">
+              <div className="text-[11px] uppercase font-black tracking-wider text-[#334E1B] flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5" />
                 1. Consignor (Origin / Farmer Gate)
               </div>
@@ -125,7 +125,7 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
 
             {/* Consignee */}
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="text-[11px] uppercase font-black tracking-wider text-blue-800 flex items-center gap-1.5">
+              <div className="text-[11px] uppercase font-black tracking-wider text-[#3F6B24] flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5" />
                 2. Consignee (Destination Facility)
               </div>
@@ -142,13 +142,13 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
           </div>
 
           {/* Transporter, Fleet & Insurance Details */}
-          <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200/80 space-y-3">
-            <div className="text-[11px] uppercase font-black tracking-wider text-blue-950 flex items-center justify-between">
+          <div className="p-4 rounded-2xl bg-[#EDFFE0]/50 border border-[#BEE7A5]/60 space-y-3">
+            <div className="text-[11px] uppercase font-black tracking-wider text-[#334E1B] flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <Truck className="w-3.5 h-3.5 text-blue-700" />
+                <Truck className="w-3.5 h-3.5 text-[#334E1B]" />
                 3. Carrier, Vehicle & Goods-In-Transit (GIT) Insurance
               </span>
-              <span className="text-emerald-700 font-bold flex items-center gap-1">
+              <span className="text-[#334E1B] font-bold flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Insured by Leadway Assurance
               </span>
@@ -169,7 +169,7 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
               </div>
               <div>
                 <span className="text-slate-500 text-[11px]">GIT Policy No:</span>
-                <div className="font-mono font-bold text-blue-900">{logistics.gitPolicyNumber || 'LEADWAY-GIT-2025-89410'}</div>
+                <div className="font-mono font-bold text-[#334E1B]">{logistics.gitPolicyNumber || 'LEADWAY-GIT-2025-89410'}</div>
               </div>
             </div>
           </div>
@@ -177,7 +177,7 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
           {/* Produce Cargo Manifest Table */}
           <div className="border border-slate-200 rounded-2xl overflow-hidden">
             <table className="w-full text-xs text-left">
-              <thead className="bg-slate-900 text-white font-bold uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#334E1B] text-white font-bold uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="p-3">Produce Item</th>
                   <th className="p-3">Quality Grade</th>
@@ -195,7 +195,7 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
                     </div>
                   </td>
                   <td className="p-3">
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[11px]">
+                    <span className="px-2 py-0.5 rounded-full bg-[#EDFFE0] text-[#334E1B] font-bold text-[11px] border border-[#BEE7A5]">
                       {order.qualityGrade.replace('_', ' ')}
                     </span>
                   </td>
@@ -217,8 +217,8 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
           <div className="p-4 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1.5 text-center sm:text-left">
               <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <Lock className="w-4 h-4 text-emerald-400" />
-                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                <Lock className="w-4 h-4 text-[#EDFFE0]" />
+                <span className="text-xs font-bold text-[#EDFFE0] uppercase tracking-wider">
                   Tamper-Evident Electronic Cargo Seal
                 </span>
               </div>
@@ -236,8 +236,8 @@ export const DigitalWaybillModal: React.FC<DigitalWaybillModalProps> = ({
               <div className="text-[10px] space-y-0.5">
                 <div className="font-bold">VERIFIED WAYBILL</div>
                 <div className="font-mono text-slate-500">Scan at Toll/Gate</div>
-                <div className="text-emerald-700 font-bold flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <div className="text-[#334E1B] font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-[#334E1B]" />
                   FarmPot Authenticated
                 </div>
               </div>

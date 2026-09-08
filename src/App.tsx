@@ -172,7 +172,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-[#EAEAE2] text-[#1F1F1F] flex flex-col font-sans antialiased selection:bg-[#334E1B] selection:text-white">
       <Header
         onToggleMobileSidebar={() => setIsSidebarOpen(prev => !prev)}
         isMobileSidebarOpen={isSidebarOpen}
@@ -190,14 +190,14 @@ const MainLayout: React.FC = () => {
       </div>
 
       {/* Sleek Interface Footer */}
-      <footer className="px-6 sm:px-8 py-3 bg-slate-900 text-slate-400 text-[10px] font-medium flex flex-wrap justify-between items-center uppercase tracking-widest border-t border-slate-800 shrink-0 gap-2">
+      <footer className="px-6 sm:px-8 py-3 bg-[#334E1B] text-[#EDFFE0]/80 text-[10px] font-medium flex flex-wrap justify-between items-center uppercase tracking-widest border-t border-[#3F6B24] shrink-0 gap-2">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-          <span>© 2026 FarmPot Nigeria · Supply Chain Intelligence v2.1.0</span>
+          <div className="w-2 h-2 rounded-full bg-[#EDFFE0] animate-pulse"></div>
+          <span className="text-white font-semibold">© 2026 FarmPot Nigeria · Supply Chain Intelligence v2.1.0</span>
         </div>
         <div className="flex items-center gap-6">
           <span>
-            System Status: <span className="text-emerald-400 font-bold">Operational</span>
+            System Status: <span className="text-[#EDFFE0] font-bold">Operational</span>
           </span>
           <span>
             Escrow Pool: <span className="text-white font-bold font-mono">₦ 142.4M</span>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sprout, Users, Landmark, Droplets, Warehouse, Plus, X, Truck, ShieldCheck } from 'lucide-react';
 import { User } from '../../types';
 import { COMMODITY_SUGGESTIONS, NIGERIAN_BANKS } from '../../data/nigeriaGeography';
+import { Dropdown } from '../common/Dropdown';
 
 interface FarmerProfileFormProps {
   formData: Partial<User>;
@@ -94,32 +95,34 @@ export const FarmerProfileForm: React.FC<FarmerProfileFormProps> = ({ formData, 
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Farming Methodology
             </label>
-            <select
+            <Dropdown
+              id="farmer-profile-method-dropdown"
+              options={[
+                { value: 'ORGANIC', label: 'Certified Organic' },
+                { value: 'CONVENTIONAL', label: 'Conventional Commercial Farming' },
+                { value: 'MIXED', label: 'Integrated / Mixed Agro-Ecology' },
+                { value: 'HYDROPONIC', label: 'Greenhouse & Hydroponics' },
+              ]}
               value={formData.farmingMethod || 'MIXED'}
-              onChange={e => onChange({ farmingMethod: e.target.value as any })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              <option value="ORGANIC">Certified Organic</option>
-              <option value="CONVENTIONAL">Conventional Commercial Farming</option>
-              <option value="MIXED">Integrated / Mixed Agro-Ecology</option>
-              <option value="HYDROPONIC">Greenhouse & Hydroponics</option>
-            </select>
+              onChange={val => onChange({ farmingMethod: val as any })}
+            />
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Irrigation Infrastructure
             </label>
-            <select
+            <Dropdown
+              id="farmer-profile-irrigation-dropdown"
+              options={[
+                { value: 'BOREHOLE_CENTER_PIVOT', label: 'Borehole & Center-Pivot / Sprinkler' },
+                { value: 'DRIP_IRRIGATION', label: 'Precision Drip Irrigation' },
+                { value: 'CANAL_FLOOD', label: 'River Basin / Gravity Canal System' },
+                { value: 'RAINFED', label: 'Seasonal Rainfed Only' },
+              ]}
               value={formData.irrigationType || 'BOREHOLE_CENTER_PIVOT'}
-              onChange={e => onChange({ irrigationType: e.target.value as any })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              <option value="BOREHOLE_CENTER_PIVOT">Borehole & Center-Pivot / Sprinkler</option>
-              <option value="DRIP_IRRIGATION">Precision Drip Irrigation</option>
-              <option value="CANAL_FLOOD">River Basin / Gravity Canal System</option>
-              <option value="RAINFED">Seasonal Rainfed Only</option>
-            </select>
+              onChange={val => onChange({ irrigationType: val as any })}
+            />
           </div>
 
           <div>
@@ -305,15 +308,16 @@ export const FarmerProfileForm: React.FC<FarmerProfileFormProps> = ({ formData, 
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Settlement Bank
             </label>
-            <select
+            <Dropdown
+              id="farmer-profile-bank-dropdown"
+              menuClassName="max-h-56"
+              options={NIGERIAN_BANKS.map(bank => ({
+                value: bank,
+                label: bank,
+              }))}
               value={formData.bankName || NIGERIAN_BANKS[1]}
-              onChange={e => onChange({ bankName: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              {NIGERIAN_BANKS.map(bank => (
-                <option key={bank} value={bank}>{bank}</option>
-              ))}
-            </select>
+              onChange={val => onChange({ bankName: val })}
+            />
           </div>
 
           <div>

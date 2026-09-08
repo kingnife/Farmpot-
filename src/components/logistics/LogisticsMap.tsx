@@ -115,7 +115,7 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
       {/* Map Control Bar */}
       <div className="p-4 bg-slate-900/90 border-b border-slate-800/80 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 relative z-20">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-500/20 text-blue-400 rounded-xl border border-blue-500/30">
+          <div className="p-2 bg-[#EDFFE0]/20 text-[#EDFFE0] rounded-xl border border-[#BEE7A5]/30">
             <Navigation className="w-4 h-4 animate-pulse" />
           </div>
           <div>
@@ -123,15 +123,15 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
               <span className="text-xs font-bold text-slate-200">
                 Corridor: {logistics.pickupState} → {logistics.deliveryState}
               </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-500/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EDFFE0]/20 text-[#EDFFE0] border border-[#BEE7A5]/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#EDFFE0] animate-ping" />
                 Live GPS Radar
               </span>
             </div>
             <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
               <span>Current: <strong className="text-slate-200">{logistics.currentLocation || 'In Transit'}</strong></span>
               <span>•</span>
-              <span className="text-blue-300">Speed: {logistics.speedKmH || 64} km/h</span>
+              <span className="text-[#BEE7A5]">Speed: {logistics.speedKmH || 64} km/h</span>
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
             onClick={() => setMapMode('STANDARD')}
             className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               mapMode === 'STANDARD'
-                ? 'bg-blue-600 text-white shadow-xs'
+                ? 'bg-[#334E1B] text-white shadow-xs'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -154,8 +154,8 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
             onClick={() => setMapMode('COLD_CHAIN')}
             className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
               mapMode === 'COLD_CHAIN'
-                ? 'bg-teal-600 text-white shadow-xs'
-                : 'text-slate-400 hover:text-teal-300'
+                ? 'bg-[#3F6B24] text-white shadow-xs'
+                : 'text-slate-400 hover:text-[#EDFFE0]'
             }`}
           >
             <Thermometer className="w-3 h-3" />
@@ -166,7 +166,7 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
             onClick={() => setMapMode('SATELLITE')}
             className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               mapMode === 'SATELLITE'
-                ? 'bg-purple-600 text-white shadow-xs'
+                ? 'bg-stone-700 text-white shadow-xs'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -178,7 +178,7 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
       {/* Interactive SVG Canvas */}
       <div className="relative w-full aspect-[16/9] min-h-[380px] sm:min-h-[460px] bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-2">
         {/* Background Grid & Compass Watermark */}
-        <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]" />
+        <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#BEE7A5_1px,transparent_1px)] [background-size:24px_24px]" />
         
         {/* Compass Rose */}
         <div className="absolute bottom-4 right-4 text-slate-700/60 pointer-events-none flex flex-col items-center">
@@ -190,12 +190,12 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
         <div className="absolute top-4 left-4 z-10 bg-slate-900/90 border border-slate-800/80 rounded-2xl p-3.5 backdrop-blur-md shadow-xl text-xs space-y-2 max-w-[220px]">
           <div className="flex items-center justify-between text-slate-400 text-[10px] uppercase font-bold tracking-wider">
             <span>Reefer Telemetry</span>
-            <span className="text-emerald-400">Connected</span>
+            <span className="text-[#EDFFE0]">Connected</span>
           </div>
 
           <div className="flex items-baseline justify-between">
             <span className="text-slate-300">Cabin Temp:</span>
-            <span className="text-base font-black text-emerald-400">
+            <span className="text-base font-black text-[#EDFFE0]">
               {logistics.temperatureCelsius || 11.2}°C
             </span>
           </div>
@@ -207,14 +207,14 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
 
           <div className="flex items-baseline justify-between text-[11px]">
             <span className="text-slate-400">Digital Seal:</span>
-            <span className="font-mono text-[10px] text-emerald-400 flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+            <span className="font-mono text-[10px] text-[#EDFFE0] flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3 text-[#EDFFE0]" />
               {logistics.cargoSealNumber || 'SEAL-OK'}
             </span>
           </div>
 
           <div className="pt-2 border-t border-slate-800 text-[10px] text-slate-400">
-            ETA: <strong className="text-blue-300">{logistics.estimatedTimeOfArrival || '5h 30m'}</strong>
+            ETA: <strong className="text-[#BEE7A5]">{logistics.estimatedTimeOfArrival || '5h 30m'}</strong>
           </div>
         </div>
 
@@ -226,9 +226,9 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
           <defs>
             {/* Gradient for Route Line */}
             <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#38bdf8" />
-              <stop offset="50%" stopColor="#10b981" />
-              <stop offset="100%" stopColor="#6366f1" />
+              <stop offset="0%" stopColor="#334E1B" />
+              <stop offset="50%" stopColor="#3F6B24" />
+              <stop offset="100%" stopColor="#BEE7A5" />
             </linearGradient>
 
             {/* Glowing filter */}
@@ -242,8 +242,8 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
 
             {/* Pulse animation for active position */}
             <radialGradient id="pulseGlow">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+              <stop offset="0%" stopColor="#3F6B24" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#334E1B" stopOpacity="0" />
             </radialGradient>
           </defs>
 
@@ -368,8 +368,8 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
                   cx={pt.projectedX}
                   cy={pt.projectedY}
                   r={isSelected ? 14 : 10}
-                  fill={isCurrent ? '#38bdf8' : isPassed ? '#10b981' : '#334155'}
-                  opacity={isCurrent ? 0.3 : 0.2}
+                  fill={isCurrent ? '#3F6B24' : isPassed ? '#334E1B' : '#334155'}
+                  opacity={isCurrent ? 0.4 : 0.2}
                   className={isCurrent ? 'animate-pulse' : ''}
                 />
 
@@ -378,7 +378,7 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
                   cx={pt.projectedX}
                   cy={pt.projectedY}
                   r={isSelected ? 6.5 : 5}
-                  fill={isCurrent ? '#38bdf8' : isPassed ? '#10b981' : '#64748b'}
+                  fill={isCurrent ? '#3F6B24' : isPassed ? '#334E1B' : '#64748b'}
                   stroke="#ffffff"
                   strokeWidth="1.5"
                 />
@@ -391,7 +391,7 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
                   height="16"
                   rx="8"
                   fill="#0f172a"
-                  stroke={isCurrent ? '#38bdf8' : isPassed ? '#10b981' : '#475569'}
+                  stroke={isCurrent ? '#3F6B24' : isPassed ? '#334E1B' : '#475569'}
                   strokeWidth="1"
                   opacity="0.9"
                 />
@@ -413,10 +413,10 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
           <g transform={`translate(${currentPos.x}, ${currentPos.y})`}>
             {/* Radar Wave Pulse */}
             <circle r="22" fill="url(#pulseGlow)" className="animate-ping" opacity="0.75" />
-            <circle r="14" fill="#0284c7" opacity="0.4" />
+            <circle r="14" fill="#334E1B" opacity="0.4" />
             
             {/* Truck Pin Shield */}
-            <circle r="9" fill="#0284c7" stroke="#ffffff" strokeWidth="2" />
+            <circle r="9" fill="#334E1B" stroke="#ffffff" strokeWidth="2" />
             
             {/* Vehicle Icon representation */}
             <path
@@ -428,11 +428,11 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
 
             {/* Vehicle Heading Speed Flag */}
             <g transform="translate(12, -10)">
-              <rect x="0" y="0" width="70" height="20" rx="6" fill="#0284c7" stroke="#ffffff" strokeWidth="1" />
-              <text x="35" y="10" textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold">
+              <rect x="0" y="0" width="74" height="20" rx="6" fill="#334E1B" stroke="#EDFFE0" strokeWidth="1" />
+              <text x="37" y="10" textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold">
                 {logistics.vehiclePlate || 'TRUCK-REEFER'}
               </text>
-              <text x="35" y="17" textAnchor="middle" fill="#bae6fd" fontSize="6.5">
+              <text x="37" y="17" textAnchor="middle" fill="#EDFFE0" fontSize="6.5">
                 {logistics.speedKmH || 64} km/h • {logistics.temperatureCelsius || 11.2}°C
               </text>
             </g>
@@ -443,11 +443,11 @@ export const LogisticsMap: React.FC<LogisticsMapProps> = ({
         <div className="absolute bottom-3 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800/80 backdrop-blur-xs">
           <div className="flex items-center gap-4 flex-wrap">
             <span className="flex items-center gap-1.5 text-slate-300">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#334E1B] border border-[#BEE7A5]" />
               Completed Milestone
             </span>
             <span className="flex items-center gap-1.5 text-slate-300">
-              <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#3F6B24] animate-pulse" />
               Active Telemetry (In-Transit)
             </span>
             <span className="flex items-center gap-1.5 text-slate-300">

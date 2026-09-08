@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AuthPageView } from '../../types';
+import { Dropdown } from '../common/Dropdown';
 
 interface BuyerAuthProps {
   initialView?: AuthPageView;
@@ -429,51 +430,54 @@ export const BuyerAuth: React.FC<BuyerAuthProps> = ({
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Buyer Classification *
                   </label>
-                  <select
+                  <Dropdown
+                    id="buyer-auth-classification-dropdown"
+                    options={[
+                      { value: 'PROCESSOR', label: 'Food & Grain Processor / Mill' },
+                      { value: 'SUPERMARKET', label: 'Supermarket / Retail Chain' },
+                      { value: 'WHOLESALER', label: 'National Commodity Wholesaler' },
+                      { value: 'EXPORTER', label: 'Agricultural Commodity Exporter' },
+                      { value: 'HOTEL_RESTAURANT', label: 'Hotel, Restaurant & Institutional (HORECA)' },
+                    ]}
                     value={buyerType}
-                    onChange={e => setBuyerType(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm outline-none bg-white"
-                  >
-                    <option value="PROCESSOR">Food & Grain Processor / Mill</option>
-                    <option value="SUPERMARKET">Supermarket / Retail Chain</option>
-                    <option value="WHOLESALER">National Commodity Wholesaler</option>
-                    <option value="EXPORTER">Agricultural Commodity Exporter</option>
-                    <option value="HOTEL_RESTAURANT">Hotel, Restaurant & Institutional (HORECA)</option>
-                  </select>
+                    onChange={val => setBuyerType(val)}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Delivery Hub State *
                   </label>
-                  <select
+                  <Dropdown
+                    id="buyer-auth-state-dropdown"
+                    options={[
+                      { value: 'Lagos', label: 'Lagos State' },
+                      { value: 'Kano', label: 'Kano State' },
+                      { value: 'Ogun', label: 'Ogun State' },
+                      { value: 'Kaduna', label: 'Kaduna State' },
+                      { value: 'Oyo', label: 'Oyo State' },
+                      { value: 'Rivers', label: 'Rivers State' },
+                      { value: 'FCT Abuja', label: 'FCT Abuja' },
+                    ]}
                     value={state}
-                    onChange={e => setState(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm outline-none bg-white"
-                  >
-                    <option value="Lagos">Lagos State</option>
-                    <option value="Kano">Kano State</option>
-                    <option value="Ogun">Ogun State</option>
-                    <option value="Kaduna">Kaduna State</option>
-                    <option value="Oyo">Oyo State</option>
-                    <option value="Rivers">Rivers State</option>
-                    <option value="FCT Abuja">FCT Abuja</option>
-                  </select>
+                    onChange={val => setState(val)}
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Estimated Monthly Procurement (NGN)
                   </label>
-                  <select
+                  <Dropdown
+                    id="buyer-auth-budget-dropdown"
+                    options={[
+                      { value: '10000000', label: '₦ 10,000,000 / month (Tier 1)' },
+                      { value: '50000000', label: '₦ 50,000,000 / month (Tier 2)' },
+                      { value: '200000000', label: '₦ 200,000,000+ / month (Enterprise)' },
+                    ]}
                     value={monthlyBudget}
-                    onChange={e => setMonthlyBudget(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 text-sm outline-none bg-white font-mono"
-                  >
-                    <option value="10000000">₦ 10,000,000 / month (Tier 1)</option>
-                    <option value="50000000">₦ 50,000,000 / month (Tier 2)</option>
-                    <option value="200000000">₦ 200,000,000+ / month (Enterprise)</option>
-                  </select>
+                    onChange={val => setMonthlyBudget(val)}
+                  />
                 </div>
               </div>
 

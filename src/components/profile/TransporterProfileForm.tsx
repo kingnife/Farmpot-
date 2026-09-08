@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Truck, ShieldCheck, Landmark, ThermometerSnowflake, Plus, X, MapPin } from 'lucide-react';
 import { User } from '../../types';
 import { NIGERIAN_BANKS, NIGERIAN_STATES } from '../../data/nigeriaGeography';
+import { Dropdown } from '../common/Dropdown';
 
 interface TransporterProfileFormProps {
   formData: Partial<User>;
@@ -228,15 +229,16 @@ export const TransporterProfileForm: React.FC<TransporterProfileFormProps> = ({ 
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Insurance Underwriter Provider
             </label>
-            <select
+            <Dropdown
+              id="transporter-profile-insurance-dropdown"
+              menuClassName="max-h-56"
+              options={INSURANCE_PROVIDERS.map(p => ({
+                value: p,
+                label: p,
+              }))}
               value={formData.insuranceProvider || INSURANCE_PROVIDERS[0]}
-              onChange={e => onChange({ insuranceProvider: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              {INSURANCE_PROVIDERS.map(p => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
+              onChange={val => onChange({ insuranceProvider: val })}
+            />
           </div>
 
           <div>
@@ -266,15 +268,16 @@ export const TransporterProfileForm: React.FC<TransporterProfileFormProps> = ({ 
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Settlement Bank
             </label>
-            <select
+            <Dropdown
+              id="transporter-profile-bank-dropdown"
+              menuClassName="max-h-56"
+              options={NIGERIAN_BANKS.map(bank => ({
+                value: bank,
+                label: bank,
+              }))}
               value={formData.bankName || NIGERIAN_BANKS[3]}
-              onChange={e => onChange({ bankName: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            >
-              {NIGERIAN_BANKS.map(bank => (
-                <option key={bank} value={bank}>{bank}</option>
-              ))}
-            </select>
+              onChange={val => onChange({ bankName: val })}
+            />
           </div>
 
           <div>

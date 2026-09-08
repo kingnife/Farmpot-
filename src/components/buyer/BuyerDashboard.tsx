@@ -101,9 +101,9 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                   ₦{(activeOrder.grandTotalNGN || activeOrder.produceTotalNGN || 0).toLocaleString()}
                 </span>
               </div>
-              <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100 text-center">
-                <span className="block text-[11px] text-emerald-600 uppercase font-bold mb-1 tracking-wider">Escrow Status</span>
-                <span className="font-bold text-sm text-emerald-700 block">
+              <div className="p-4 bg-[#EDFFE0] rounded-xl border border-[#BEE7A5] text-center">
+                <span className="block text-[11px] text-[#334E1B] uppercase font-bold mb-1 tracking-wider">Escrow Status</span>
+                <span className="font-bold text-sm text-[#334E1B] block">
                   {activeOrder.escrow?.status === 'FUNDS_HELD' ? 'Funds Held' : (activeOrder.escrow?.status || 'PENDING').replace(/_/g, ' ')}
                 </span>
               </div>
@@ -113,7 +113,7 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
             <div className="relative px-2 sm:px-6 my-2">
               <div className="absolute top-2 left-6 right-6 h-1 bg-slate-200 -translate-y-1/2"></div>
               <div
-                className="absolute top-2 left-6 h-1 bg-emerald-500 -translate-y-1/2 transition-all duration-500"
+                className="absolute top-2 left-6 h-1 bg-[#334E1B] -translate-y-1/2 transition-all duration-500"
                 style={{
                   width: `${
                     activeOrder.status === 'COMPLETED'
@@ -134,12 +134,12 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                   <div key={step.key} className="flex flex-col items-center gap-2">
                     <div
                       className={`w-4 h-4 rounded-full ring-4 ring-white transition-colors ${
-                        step.active ? 'bg-emerald-500' : 'bg-slate-300'
+                        step.active ? 'bg-[#334E1B]' : 'bg-slate-300'
                       }`}
                     ></div>
                     <span
                       className={`text-[10px] font-bold uppercase tracking-wider ${
-                        step.active ? 'text-emerald-700' : 'text-slate-400'
+                        step.active ? 'text-[#334E1B]' : 'text-slate-400'
                       }`}
                     >
                       {step.label}
@@ -159,7 +159,7 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
             <button
               type="button"
               onClick={onOpenCreateRequest}
-              className="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md shadow-emerald-100 transition-all cursor-pointer"
+              className="mt-4 px-4 py-2 bg-[#334E1B] hover:bg-[#3F6B24] text-white font-bold rounded-xl text-xs shadow-md transition-all cursor-pointer"
             >
               Create Demand Request
             </button>
@@ -176,7 +176,7 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
             <button
               type="button"
               onClick={() => setActiveView('matching')}
-              className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 cursor-pointer"
+              className="text-xs font-semibold text-[#334E1B] hover:text-[#3F6B24] cursor-pointer"
             >
               View All Matches →
             </button>
@@ -184,8 +184,6 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
 
           <div className="p-4 flex flex-col gap-3">
             {(listings || []).slice(0, 3).map((item, idx) => {
-              const bgColors = ['bg-blue-50 text-blue-600', 'bg-orange-50 text-orange-600', 'bg-purple-50 text-purple-600'];
-              const colorClass = bgColors[idx % bgColors.length];
               const supplierState = item.farmerState || item.state || 'Kano';
               const trustScores = [96, 91, 88];
 
@@ -193,10 +191,10 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                 <div
                   key={item.id}
                   onClick={() => setActiveView('matching')}
-                  className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-[#334E1B] transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-4 min-w-0">
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 ${colorClass}`}>
+                    <div className="w-12 h-12 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 bg-[#EDFFE0] text-[#334E1B] border border-[#BEE7A5]">
                       {getInitials(item.farmerName || 'Supplier')}
                     </div>
                     <div className="min-w-0">
@@ -213,7 +211,7 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                     <span className="text-sm font-bold text-slate-900 font-mono">
                       ₦{(item.pricePerUnit || 0).toLocaleString()}/{(item.unit || 'unit').replace('_', ' ')}
                     </span>
-                    <div className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded uppercase">
+                    <div className="px-2 py-0.5 bg-[#EDFFE0] text-[#334E1B] border border-[#BEE7A5] text-[10px] font-bold rounded uppercase">
                       Verified Trust {trustScores[idx] || 90}
                     </div>
                   </div>
@@ -226,37 +224,37 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
 
       {/* Aside 4 Cols: Deep Luxury Emerald Supplier Profile & Market Intelligence */}
       <aside className="lg:col-span-4 flex flex-col gap-6">
-        {/* Emerald Luxury Supplier Card */}
-        <div className="bg-emerald-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+        {/* FarmPot Deep Green Luxury Supplier Card */}
+        <div className="bg-[#334E1B] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden border border-[#3F6B24]">
           <div className="relative z-10">
-            <span className="text-xs font-bold text-emerald-300 uppercase tracking-widest block mb-4">
+            <span className="text-xs font-bold text-[#EDFFE0] uppercase tracking-widest block mb-4">
               Featured Supplier Profile
             </span>
             <h3 className="text-2xl font-bold mb-1 tracking-tight">Al-Hassan Farms</h3>
-            <p className="text-emerald-100 text-sm mb-6 leading-relaxed">
+            <p className="text-[#EDFFE0]/90 text-sm mb-6 leading-relaxed">
               Specializing in Dry-Season Tomatoes and Maize. Located in Bagwai LGA, Kano State.
             </p>
 
             <div className="bg-white/10 rounded-xl p-4 border border-white/10 backdrop-blur-xs">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-xs text-emerald-200">Trust Score</span>
+                <span className="text-xs text-[#EDFFE0]/80">Trust Score</span>
                 <span className="text-xl font-bold text-white">
-                  94<span className="text-sm text-emerald-300 font-normal">/100</span>
+                  94<span className="text-sm text-[#EDFFE0] font-normal">/100</span>
                 </span>
               </div>
-              <div className="w-full h-1.5 bg-emerald-800 rounded-full overflow-hidden">
-                <div className="w-[94%] h-full bg-emerald-400 rounded-full"></div>
+              <div className="w-full h-1.5 bg-black/20 rounded-full overflow-hidden">
+                <div className="w-[94%] h-full bg-[#EDFFE0] rounded-full"></div>
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-xs text-emerald-100">
-                  <span className="text-emerald-400 font-bold">✓</span> Government Identity Verified (NIN/CAC)
+                <div className="flex items-center gap-2 text-xs text-[#EDFFE0]/90">
+                  <span className="text-[#EDFFE0] font-bold">✓</span> Government Identity Verified (NIN/CAC)
                 </div>
-                <div className="flex items-center gap-2 text-xs text-emerald-100">
-                  <span className="text-emerald-400 font-bold">✓</span> 102 Successful Deliveries Settled
+                <div className="flex items-center gap-2 text-xs text-[#EDFFE0]/90">
+                  <span className="text-[#EDFFE0] font-bold">✓</span> 102 Successful Deliveries Settled
                 </div>
-                <div className="flex items-center gap-2 text-xs text-emerald-100">
-                  <span className="text-emerald-400 font-bold">✓</span> Zero Quality Disputes on Record
+                <div className="flex items-center gap-2 text-xs text-[#EDFFE0]/90">
+                  <span className="text-[#EDFFE0] font-bold">✓</span> Zero Quality Disputes on Record
                 </div>
               </div>
             </div>
@@ -272,14 +270,14 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
           <div className="flex flex-col gap-4 flex-1">
             <div className="flex justify-between items-center py-2 border-b border-slate-100">
               <span className="text-sm text-slate-500">Avg. Price Tomatoes (Grade A)</span>
-              <span className="font-bold text-emerald-600 font-mono text-sm">
-                ₦ 910/kg <span className="text-[10px] text-emerald-700">↑ 4%</span>
+              <span className="font-bold text-[#334E1B] font-mono text-sm">
+                ₦ 910/kg <span className="text-[10px] text-[#3F6B24]">↑ 4%</span>
               </span>
             </div>
 
             <div className="flex justify-between items-center py-2 border-b border-slate-100">
               <span className="text-sm text-slate-500">Demand Level (North West)</span>
-              <span className="font-bold text-blue-600 uppercase text-xs">High</span>
+              <span className="font-bold text-[#3F6B24] uppercase text-xs">High</span>
             </div>
 
             <div className="flex justify-between items-center py-2 border-b border-slate-100">
@@ -294,7 +292,7 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                   type="button"
                   id="buyer-sidebar-create-demand-btn"
                   onClick={onOpenCreateRequest}
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold shadow-md shadow-emerald-100 transition-colors cursor-pointer"
+                  className="w-full py-2.5 bg-[#334E1B] hover:bg-[#3F6B24] text-white rounded-lg text-sm font-bold shadow-md transition-colors cursor-pointer"
                 >
                   Create New Demand Request
                 </button>
