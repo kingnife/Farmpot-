@@ -86,7 +86,11 @@ export const BuyerOrders: React.FC = () => {
 
   const locationOptions = useMemo(() => {
     const states = Array.from(
-      new Set(buyerOrders.map(o => o.destinationState || o.supplierState).filter(Boolean))
+      new Set(
+        buyerOrders
+          .map(o => (o as any).destinationState || o.buyerState || o.supplierState)
+          .filter(Boolean)
+      )
     );
     return [
       { value: 'ALL', label: 'All Locations' },
@@ -147,21 +151,29 @@ export const BuyerOrders: React.FC = () => {
       if (statusFilter !== 'ALL' && o.status !== statusFilter) return false;
       if (productFilter !== 'ALL' && o.product !== productFilter) return false;
       if (supplierFilter !== 'ALL' && o.supplierName !== supplierFilter) return false;
+
+      const orderDestState = (o as any).destinationState || o.buyerState;
       if (
         locationFilter !== 'ALL' &&
-        o.destinationState !== locationFilter &&
+        orderDestState !== locationFilter &&
         o.supplierState !== locationFilter
       ) {
         return false;
       }
-      if (deliveryFilter !== 'ALL' && o.deliveryTerms !== deliveryFilter) return false;
+
+      const orderDelivery =
+        (o as any).deliveryTerms ||
+        (o.logisticsFeeNGN > 0 ? 'DESTINATION_DELIVERED' : 'FARM_GATE_PICKUP');
+      if (deliveryFilter !== 'ALL' && orderDelivery !== deliveryFilter) return false;
+
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const match =
           o.id.toLowerCase().includes(q) ||
           o.product.toLowerCase().includes(q) ||
           o.supplierName.toLowerCase().includes(q) ||
-          (o.destinationState && o.destinationState.toLowerCase().includes(q));
+          (orderDestState && orderDestState.toLowerCase().includes(q)) ||
+          (o.supplierState && o.supplierState.toLowerCase().includes(q));
         if (!match) return false;
       }
       return true;
@@ -284,9 +296,7 @@ export const BuyerOrders: React.FC = () => {
             menuClassName="w-60"
             trigger={isOpen => (
               <div
-                role="button"
-                tabIndex={0}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border select-none ${
                   statusFilter !== 'ALL'
                     ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
                     : isOpen
@@ -313,9 +323,7 @@ export const BuyerOrders: React.FC = () => {
             menuClassName="w-56"
             trigger={isOpen => (
               <div
-                role="button"
-                tabIndex={0}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border select-none ${
                   productFilter !== 'ALL'
                     ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
                     : isOpen
@@ -342,9 +350,7 @@ export const BuyerOrders: React.FC = () => {
             menuClassName="w-60"
             trigger={isOpen => (
               <div
-                role="button"
-                tabIndex={0}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border select-none ${
                   supplierFilter !== 'ALL'
                     ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
                     : isOpen
@@ -371,9 +377,7 @@ export const BuyerOrders: React.FC = () => {
             menuClassName="w-56"
             trigger={isOpen => (
               <div
-                role="button"
-                tabIndex={0}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border select-none ${
                   locationFilter !== 'ALL'
                     ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
                     : isOpen
@@ -400,9 +404,7 @@ export const BuyerOrders: React.FC = () => {
             menuClassName="w-64"
             trigger={isOpen => (
               <div
-                role="button"
-                tabIndex={0}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border select-none ${
                   deliveryFilter !== 'ALL'
                     ? 'bg-[#EDFFE0] border-[#BEE7A5] text-[#334E1B]'
                     : isOpen
@@ -429,9 +431,7 @@ export const BuyerOrders: React.FC = () => {
             menuClassName="w-56"
             trigger={isOpen => (
               <div
-                role="button"
-                tabIndex={0}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer border select-none ${
                   sortBy !== 'NEWEST'
                     ? 'bg-slate-100 border-slate-300 text-slate-900 font-bold'
                     : isOpen
@@ -555,9 +555,7 @@ export const BuyerOrders: React.FC = () => {
                     menuClassName="w-64 p-1.5"
                     trigger={isOpen => (
                       <div
-                        role="button"
-                        tabIndex={0}
-                        className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer select-none ${
                           isOpen
                             ? 'bg-slate-100 border-slate-300 text-slate-900 ring-2 ring-slate-200'
                             : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'

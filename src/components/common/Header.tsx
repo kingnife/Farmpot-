@@ -28,6 +28,7 @@ import { useApp } from '../../context/AppContext';
 import { TrustScoreBadge } from './TrustScoreBadge';
 import { NotificationDrawer } from './NotificationDrawer';
 import { Dropdown } from './Dropdown';
+import { ClientProfileDropdown } from './ClientProfileDropdown';
 
 interface HeaderProps {
   onToggleMobileSidebar: () => void;
@@ -114,8 +115,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
                   menuClassName="w-64 p-1.5"
                   trigger={isOpen => (
                     <div
-                      role="button"
-                      tabIndex={0}
                       className={`flex items-center gap-1.5 pb-1 cursor-pointer transition-colors ${
                         ['requests', 'my-requests', 'matching', 'contracts', 'phase2', 'requests-feed'].includes(activeView)
                           ? 'text-[#334E1B] border-b-2 border-[#334E1B] font-bold'
@@ -317,208 +316,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
                 )}
               </button>
 
-              {/* Role & Persona Pill with Role-Aware Dropdown */}
-              <Dropdown
-                id="header-user-profile-dropdown"
-                align="right"
-                menuClassName="w-80"
-                trigger={isOpen => (
-                  <div
-                    role="button"
-                    className={`flex items-center gap-2 sm:gap-3 p-1.5 rounded-xl transition-colors cursor-pointer border ${
-                      isOpen
-                        ? 'bg-slate-100/80 border-slate-200'
-                        : 'hover:bg-slate-50 border-transparent hover:border-slate-200'
-                    }`}
-                  >
-                    <div className="flex flex-col items-end text-right hidden sm:flex">
-                      <span className="text-[10px] font-bold text-[#777777] uppercase tracking-widest">
-                        {isAdmin ? 'ADMIN CLEARANCE' : `ROLE: ${currentUser.role}`}
-                      </span>
-                      <span className="text-xs font-bold text-[#1F1F1F]">
-                        {currentUser.businessName || currentUser.name}
-                      </span>
-                    </div>
-                    <div className="w-9 h-9 rounded-full border-2 border-[#BEE7A5] bg-[#EDFFE0] text-[#334E1B] flex items-center justify-center text-xs font-extrabold">
-                      {getInitials(currentUser.businessName || currentUser.name)}
-                    </div>
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 text-slate-400 hidden sm:block transition-transform duration-200 ${
-                        isOpen ? 'rotate-180 text-[#334E1B]' : ''
-                      }`}
-                    />
-                  </div>
-                )}
-              >
-                {({ close }) => (
-                  <div>
-                    {isAdmin ? (
-                      /* ADMIN DROPDOWN: Master Switcher & Governance Links */
-                      <>
-                        <div className="px-4 py-2 border-b border-[#BEE7A5] flex items-center justify-between bg-[#EDFFE0]">
-                          <div className="flex items-center gap-1.5 text-[#334E1B] font-bold text-xs">
-                            <ShieldCheck className="w-4 h-4 text-[#334E1B]" />
-                            <span>Administrator Control</span>
-                          </div>
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-white text-[#334E1B] font-mono font-bold border border-[#BEE7A5]">
-                            TIER 4
-                          </span>
-                        </div>
-
-                        <div className="p-2 space-y-1 border-b border-slate-100">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveView('admin-analytics');
-                              close();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-bold text-[#1F1F1F] hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
-                          >
-                            <PieChart className="w-3.5 h-3.5 text-[#334E1B]" />
-                            <span>Transaction Analytics & Data Hub</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveView('admin-users');
-                              close();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-bold text-[#1F1F1F] hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
-                          >
-                            <Users className="w-3.5 h-3.5 text-[#334E1B]" />
-                            <span>User Directory & Profile Authority</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveView('profile');
-                              close();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-bold text-[#1F1F1F] hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
-                          >
-                            <UserIcon className="w-3.5 h-3.5 text-[#334E1B]" />
-                            <span>Profile Editor (With Master Switcher)</span>
-                          </button>
-                        </div>
-
-                        {/* Quick Switch List for Admin */}
-                        <div className="px-4 py-1 text-[10px] uppercase font-bold text-[#777777]">
-                          Inspect & Switch Client
-                        </div>
-                        <div className="max-h-48 overflow-y-auto divide-y divide-slate-50">
-                          {users.map(u => (
-                            <button
-                              key={u.id}
-                              type="button"
-                              onClick={() => {
-                                setCurrentUserById(u.id);
-                                close();
-                              }}
-                              className={`w-full px-4 py-2 text-left flex items-center gap-2.5 hover:bg-slate-50 transition-colors cursor-pointer ${
-                                currentUser.id === u.id ? 'bg-[#EDFFE0] text-[#334E1B] font-bold' : ''
-                              }`}
-                            >
-                              <div className="w-7 h-7 rounded-full bg-slate-100 text-[#1F1F1F] flex items-center justify-center font-bold text-[10px] shrink-0">
-                                {getInitials(u.businessName || u.name)}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="text-xs font-bold text-[#1F1F1F] truncate">{u.name}</div>
-                                <div className="text-[10px] text-[#777777] capitalize">
-                                  {u.role.toLowerCase()} · {u.state}
-                                </div>
-                              </div>
-                              {currentUser.id === u.id && (
-                                <span className="w-2 h-2 rounded-full bg-[#334E1B]"></span>
-                              )}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    ) : (
-                      /* OTHER ROLES (Farmer / Transporter): Persona Profile & Workspace Navigation */
-                      <>
-                        <div className="p-4 border-b border-slate-100 bg-[#EDFFE0]/30 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-[#1F1F1F]">{currentUser.name}</span>
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#EDFFE0] text-[#334E1B] font-bold border border-[#BEE7A5]">
-                              {currentUser.role}
-                            </span>
-                          </div>
-                          <div className="text-[11px] text-[#777777]">{currentUser.businessName || 'Verified Enterprise'}</div>
-                          <div className="text-[10px] text-[#777777] font-mono">{currentUser.email}</div>
-                        </div>
-
-                        <div className="p-2 space-y-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveView('profile');
-                              close();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-bold text-[#1F1F1F] hover:bg-[#EDFFE0]/50 flex items-center gap-2 cursor-pointer"
-                          >
-                            <UserIcon className="w-3.5 h-3.5 text-[#334E1B]" />
-                            <span>My Profile & Settings</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveView('payments');
-                              close();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-bold text-[#1F1F1F] hover:bg-[#EDFFE0]/50 flex items-center gap-2 cursor-pointer"
-                          >
-                            <Wallet className="w-3.5 h-3.5 text-[#334E1B]" />
-                            <span>Wallet & Escrow Vault</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveView('verification');
-                              close();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-bold text-[#1F1F1F] hover:bg-[#EDFFE0]/50 flex items-center gap-2 cursor-pointer"
-                          >
-                            <UserCheck className="w-3.5 h-3.5 text-[#334E1B]" />
-                            <span>Identity & KYC Verification</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              close();
-                              openAuth();
-                            }}
-                            className="w-full px-3 py-2 rounded-xl text-left text-xs font-bold text-[#1F1F1F] hover:bg-[#EDFFE0]/50 flex items-center gap-2 border-t border-slate-100 mt-1 pt-2 cursor-pointer"
-                          >
-                            <KeyRound className="w-3.5 h-3.5 text-[#334E1B]" />
-                            <span>Switch Client (Auth Portal)</span>
-                          </button>
-                        </div>
-                      </>
-                    )}
-
-                    {/* Exit / Logout Option */}
-                    <div className="p-2 border-t border-slate-100 bg-slate-50/70 rounded-b-2xl">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          close();
-                          logoutToExitPage();
-                        }}
-                        className="w-full px-3 py-2 rounded-xl text-rose-700 hover:bg-rose-50 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                      >
-                        <LogOut className="w-3.5 h-3.5" />
-                        <span>Logout & View Exit Summary</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </Dropdown>
+              {/* Role & Persona Pill with Redesigned Role-Aware Client Profile Dropdown */}
+              <ClientProfileDropdown
+                currentUser={currentUser}
+                isAdmin={isAdmin}
+                users={users}
+                setCurrentUserById={setCurrentUserById}
+                setActiveView={setActiveView}
+                openAuth={openAuth}
+                logoutToExitPage={logoutToExitPage}
+              />
 
               {/* Direct Quick Exit Button */}
               <button

@@ -26,6 +26,7 @@ export interface DropdownProps {
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   minWidth?: string;
+  fullWidth?: boolean;
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -45,6 +46,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   isOpen: controlledIsOpen,
   onOpenChange,
   minWidth,
+  fullWidth,
 }) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -54,6 +56,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   const isControlled = controlledIsOpen !== undefined;
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
+  const isFullWidth = fullWidth || className.includes('w-full') || className.includes('flex-1');
 
   const setIsOpen = useCallback((open: boolean) => {
     if (!isControlled) {
@@ -92,19 +95,40 @@ export const Dropdown: React.FC<DropdownProps> = ({
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const isTypingInInput = target && (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      );
+
       if (e.key === 'Escape') {
         e.preventDefault();
         setIsOpen(false);
         buttonRef.current?.focus();
       } else if (options && options.length > 0) {
         if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          setHighlightedIndex(prev => (prev < options.length - 1 ? prev + 1 : 0));
+          if (!isTypingInInput) {
+            e.preventDefault();
+            setHighlightedIndex(prev => {
+              const nextIndex = prev < options.length - 1 ? prev + 1 : 0;
+              const el = menuRef.current?.querySelector(`[data-index="${nextIndex}"]`);
+              el?.scrollIntoView({ block: 'nearest' });
+              return nextIndex;
+            });
+          }
         } else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          setHighlightedIndex(prev => (prev > 0 ? prev - 1 : options.length - 1));
+          if (!isTypingInInput) {
+            e.preventDefault();
+            setHighlightedIndex(prev => {
+              const nextIndex = prev > 0 ? prev - 1 : options.length - 1;
+              const el = menuRef.current?.querySelector(`[data-index="${nextIndex}"]`);
+              el?.scrollIntoView({ block: 'nearest' });
+              return nextIndex;
+            });
+          }
         } else if (e.key === 'Enter' || e.key === ' ') {
-          if (highlightedIndex >= 0 && highlightedIndex < options.length) {
+          if (!isTypingInInput && highlightedIndex >= 0 && highlightedIndex < options.length) {
             e.preventDefault();
             const selectedOpt = options[highlightedIndex];
             if (selectedOpt && !selectedOpt.disabled) {
@@ -138,7 +162,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
       );
       // Reset highlighted index to current value or 0
       if (options && options.length > 0) {
-        const currentIndex = options.findIndex(opt => opt.value === value);
+        const currentIndex = options.findIndex(
+          opt => opt.value === value || (value !== undefined && value !== null && String(opt.value) === String(value))
+        );
         setHighlightedIndex(currentIndex >= 0 ? currentIndex : 0);
       }
     }
@@ -152,13 +178,15 @@ export const Dropdown: React.FC<DropdownProps> = ({
     buttonRef.current?.focus();
   };
 
-  const selectedOption = options?.find(opt => opt.value === value);
+  const selectedOption = options?.find(
+    opt => opt.value === value || (value !== undefined && value !== null && String(opt.value) === String(value))
+  );
 
   return (
     <div
       ref={containerRef}
       id={`${uniqueId}-wrapper`}
-      className={`relative inline-block text-left ${className}`}
+      className={`relative ${isFullWidth ? 'block w-full' : 'inline-block'} text-left ${className}`}
     >
       {label && (
         <label
@@ -199,6 +227,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           className={`flex items-center justify-between gap-2 px-3 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer select-none ${
+            isFullWidth ? 'w-full' : ''
+          } ${
             isOpen
               ? 'border-[#334E1B] ring-2 ring-[#334E1B]/20 bg-white text-[#1F1F1F]'
               : 'border-slate-200 bg-white text-[#1F1F1F] hover:border-slate-300 hover:bg-slate-50'
@@ -227,24 +257,27 @@ export const Dropdown: React.FC<DropdownProps> = ({
           id={`${uniqueId}-menu`}
           role={options ? 'listbox' : 'menu'}
           aria-labelledby={uniqueId}
-          className={`absolute z-50 mt-1.5 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 ${
+          className={`absolute z-50 mt-1.5 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex flex-col max-w-[calc(100vw-2rem)] animate-in fade-in zoom-in-95 duration-100 ${
             align === 'right' ? 'right-0' : 'left-0'
-          } ${menuClassName}`}
-          style={minWidth ? { minWidth } : { minWidth: '10rem' }}
+          } ${isFullWidth && !menuClassName.includes('w-') ? 'w-full' : ''} ${menuClassName}`}
+          style={minWidth ? { minWidth } : isFullWidth ? { minWidth: '100%' } : { minWidth: '10rem' }}
         >
           {children ? (
             typeof children === 'function'
               ? children({ close: () => setIsOpen(false), isOpen })
               : children
           ) : options && options.length > 0 ? (
-            <div className="py-1.5 max-h-64 overflow-y-auto divide-y divide-slate-50">
+            <div className="py-1.5 max-h-60 overflow-y-auto divide-y divide-slate-50 flex-1 overscroll-contain">
               {options.map((opt, index) => {
-                const isSelected = opt.value === value;
+                const isSelected =
+                  opt.value === value ||
+                  (value !== undefined && value !== null && String(opt.value) === String(value));
                 const isHighlighted = highlightedIndex === index;
 
                 return (
                   <button
                     key={opt.value}
+                    data-index={index}
                     type="button"
                     role="option"
                     aria-selected={isSelected}

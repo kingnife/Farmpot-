@@ -37,7 +37,7 @@ export const NegotiationModal: React.FC<NegotiationModalProps> = ({
   const [deliveryTerms, setDeliveryTerms] = useState<'FARM_GATE_PICKUP' | 'DESTINATION_DELIVERED'>(
     'DESTINATION_DELIVERED'
   );
-  const [paymentTerms, setPaymentTerms] = useState<'FULL_ESCROW' | 'DEPOSIT_50_BALANCE_ON_DELIVERY'>(
+  const [paymentTerms, setPaymentTerms] = useState<'FULL_ESCROW' | '50_DEPOSIT_50_ON_DELIVERY'>(
     'FULL_ESCROW'
   );
   const [notes, setNotes] = useState(
@@ -137,6 +137,7 @@ export const NegotiationModal: React.FC<NegotiationModalProps> = ({
             <label className="block font-bold text-slate-700 mb-1">Quality Grade Specification *</label>
             <Dropdown
               id="modal-negotiate-grade-dropdown"
+              fullWidth
               options={[
                 { value: 'GRADE_A', label: 'Grade A (Premium High Brix)' },
                 { value: 'GRADE_B', label: 'Grade B (Standard Commercial)' },
@@ -154,6 +155,7 @@ export const NegotiationModal: React.FC<NegotiationModalProps> = ({
             <label className="block font-bold text-slate-700 mb-1">Logistics / Delivery Terms *</label>
             <Dropdown
               id="modal-negotiate-delivery-terms-dropdown"
+              fullWidth
               options={[
                 {
                   value: 'DESTINATION_DELIVERED',
@@ -173,13 +175,14 @@ export const NegotiationModal: React.FC<NegotiationModalProps> = ({
             <label className="block font-bold text-slate-700 mb-1">Escrow Payment Terms *</label>
             <Dropdown
               id="modal-negotiate-payment-terms-dropdown"
+              fullWidth
               options={[
                 {
                   value: 'FULL_ESCROW',
                   label: '100% Locked in Escrow Vault (Recommended)',
                 },
                 {
-                  value: 'DEPOSIT_50_BALANCE_ON_DELIVERY',
+                  value: '50_DEPOSIT_50_ON_DELIVERY',
                   label: '50% Deposit + 50% on Quality Confirmation',
                 },
               ]}

@@ -91,6 +91,7 @@ export const CreateDemandRequestModal: React.FC<CreateDemandRequestModalProps> =
             <label className="block font-bold text-slate-700 mb-1">Category</label>
             <Dropdown
               id="modal-demand-category-dropdown"
+              fullWidth
               options={[
                 { value: 'VEGETABLES', label: 'Vegetables (Tomatoes, Pepper, Onions)' },
                 { value: 'GRAINS', label: 'Grains (Maize, Sorghum, Millet, Rice)' },
@@ -121,6 +122,7 @@ export const CreateDemandRequestModal: React.FC<CreateDemandRequestModalProps> =
             <label className="block font-bold text-slate-700 mb-1">Quality Grade Required *</label>
             <Dropdown
               id="modal-demand-quality-grade-dropdown"
+              fullWidth
               options={[
                 { value: 'GRADE_A', label: 'Grade A (Firm, Unblemished, Industrial)' },
                 { value: 'GRADE_B', label: 'Grade B (Standard Commercial Grade)' },
@@ -150,6 +152,7 @@ export const CreateDemandRequestModal: React.FC<CreateDemandRequestModalProps> =
             <label className="block font-bold text-slate-700 mb-1">Unit of Measure *</label>
             <Dropdown
               id="modal-demand-unit-dropdown"
+              fullWidth
               options={[
                 { value: 'CRATE', label: 'Crates (approx. 25kg)' },
                 { value: 'BAG_50KG', label: '50kg Bags' },

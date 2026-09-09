@@ -91,6 +91,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, 
             <label className="block font-bold text-slate-700 mb-1">Produce Category *</label>
             <Dropdown
               id="modal-listing-category-dropdown"
+              fullWidth
               options={[
                 { value: 'VEGETABLES', label: 'Vegetables (Tomatoes, Pepper, Onions)' },
                 { value: 'GRAINS', label: 'Grains (Maize, Rice, Sorghum)' },
@@ -121,6 +122,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, 
             <label className="block font-bold text-slate-700 mb-1">Quality Grade *</label>
             <Dropdown
               id="modal-listing-grade-dropdown"
+              fullWidth
               options={[
                 { value: 'GRADE_A', label: 'Grade A (Premium High Brix / Clean)' },
                 { value: 'GRADE_B', label: 'Grade B (Standard Commercial)' },
@@ -150,6 +152,7 @@ export const CreateListingModal: React.FC<CreateListingModalProps> = ({ isOpen, 
             <label className="block font-bold text-slate-700 mb-1">Unit of Measure *</label>
             <Dropdown
               id="modal-listing-unit-dropdown"
+              fullWidth
               options={[
                 { value: 'CRATE', label: 'Crates (approx. 25kg)' },
                 { value: 'BAG_50KG', label: '50kg Bags' },
