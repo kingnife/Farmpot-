@@ -8,6 +8,50 @@ export type UserRole =
   | 'FINANCE'
   | 'SUPPORT';
 
+export type BuyerCategoryType = 'personal' | 'business' | 'organization';
+
+export type PersonalPurchasePurpose =
+  | 'Household consumption'
+  | 'Personal use'
+  | 'Event / occasion'
+  | 'Other';
+
+export type BusinessPurchasePurpose =
+  | 'Restaurant / Food service'
+  | 'Retail / Reselling'
+  | 'Food processing'
+  | 'Manufacturing'
+  | 'Hospitality'
+  | 'Agriculture / Farming'
+  | 'Export'
+  | 'Other';
+
+export type BusinessPurchasingFrequency =
+  | 'One-time'
+  | 'Occasional'
+  | 'Recurring'
+  | 'Bulk purchases';
+
+export type OrganizationType =
+  | 'Schools'
+  | 'Hospitals'
+  | 'Hotels'
+  | 'NGOs'
+  | 'Government institutions'
+  | 'Cooperatives'
+  | 'Religious organizations'
+  | 'Large associations'
+  | 'Other registered organizations';
+
+export type OrganizationPurchasePurpose =
+  | 'Food supply'
+  | 'Institutional consumption'
+  | 'Events'
+  | 'Community programs'
+  | 'Resale'
+  | 'Food processing'
+  | 'Other';
+
 export type VerificationStatus =
   | 'NOT_VERIFIED'
   | 'SUBMITTED'
@@ -76,8 +120,37 @@ export interface User {
   bankAccountNumber?: string;
   bankAccountName?: string;
 
-  // Buyer Specific
-  buyerType?: 'PROCESSOR' | 'SUPERMARKET' | 'WHOLESALER' | 'EXPORTER' | 'HOTEL_RESTAURANT';
+  // Buyer Specific & Classification System
+  buyerType?: 'PROCESSOR' | 'SUPERMARKET' | 'WHOLESALER' | 'EXPORTER' | 'HOTEL_RESTAURANT' | any;
+  buyerTypeCategory?: BuyerCategoryType;
+  buyer_type?: BuyerCategoryType;
+  buyerClassificationCompleted?: boolean;
+
+  // Personal Buyer Profile
+  deliveryAddress?: string;
+  preferredLocation?: string;
+  preferredPaymentMethod?: 'Card' | 'Bank Transfer' | 'Escrow Vault' | 'Cash on Delivery' | string;
+  personalPurchasePurpose?: PersonalPurchasePurpose | string;
+
+  // Business Buyer Profile
+  businessType?: string;
+  businessLocation?: string;
+  businessContactPerson?: string;
+  businessPhone?: string;
+  businessEmail?: string;
+  businessPurchasePurpose?: BusinessPurchasePurpose | string;
+  purchasingFrequency?: BusinessPurchasingFrequency | string;
+
+  // Organization Buyer Profile
+  organizationName?: string;
+  organizationType?: OrganizationType | string;
+  organizationLocation?: string;
+  organizationContactPerson?: string;
+  organizationPhone?: string;
+  organizationEmail?: string;
+  organizationRegNumber?: string;
+  organizationPurchasePurpose?: OrganizationPurchasePurpose | string;
+
   monthlyProcurementBudgetNGN?: number;
   targetCrops?: string[];
   facilityLocations?: string[];
@@ -125,7 +198,8 @@ export interface FarmerProfile extends User {
 }
 
 export interface BuyerProfile extends User {
-  buyerType: 'PROCESSOR' | 'SUPERMARKET' | 'WHOLESALER' | 'EXPORTER' | 'HOTEL_RESTAURANT';
+  buyerTypeCategory?: BuyerCategoryType;
+  buyerType?: any;
   monthlyProcurementBudgetNGN: number;
   targetCrops: string[];
   facilityLocations: string[];

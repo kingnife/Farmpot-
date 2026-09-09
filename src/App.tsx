@@ -15,6 +15,7 @@ import { BuyerOrders } from './components/buyer/BuyerOrders';
 import { CreateDemandRequestModal } from './components/buyer/CreateDemandRequestModal';
 import { NegotiationModal } from './components/buyer/NegotiationModal';
 import { QualityInspectionModal } from './components/buyer/QualityInspectionModal';
+import { BuyerTypeOnboardingModal } from './components/buyer/BuyerTypeOnboardingModal';
 
 // Farmer views & modals
 import { FarmerDashboard } from './components/farmer/FarmerDashboard';
@@ -46,16 +47,29 @@ import { ProfileView } from './components/common/ProfileView';
 import { ContractsView } from './components/common/ContractsView';
 import { Phase2FeaturesView } from './components/common/Phase2FeaturesView';
 import { UnifiedAuthView } from './components/auth/UnifiedAuthView';
+import { FarmPotAssistantDrawer } from './components/assistant/FarmPotAssistantDrawer';
+import { AssistantLauncherButton } from './components/assistant/AssistantLauncherButton';
 
 const MainLayout: React.FC = () => {
   const {
     activeView,
     currentRole,
+    currentUser,
     isTourOpen,
     setIsTourOpen,
     isNotificationDrawerOpen,
     setIsNotificationDrawerOpen,
     isAuthScreenOpen,
+    isBuyerTypeModalOpen,
+    setIsBuyerTypeModalOpen,
+    isAssistantOpen,
+    setIsAssistantOpen,
+    listings,
+    orders,
+    selectedListingId,
+    setSelectedListingId,
+    selectedOrderId,
+    setSelectedOrderId,
   } = useApp();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -63,6 +77,9 @@ const MainLayout: React.FC = () => {
   const [isCreateListingOpen, setIsCreateListingOpen] = useState(false);
   const [isNegotiationOpen, setIsNegotiationOpen] = useState(false);
   const [isInspectionOpen, setIsInspectionOpen] = useState(false);
+
+  const targetListing = listings.find(l => l.id === selectedListingId) || listings[0] || null;
+  const targetOrder = orders.find(o => o.id === selectedOrderId) || orders[0] || null;
 
   const renderActiveView = () => {
     switch (activeView) {
@@ -83,10 +100,12 @@ const MainLayout: React.FC = () => {
 
       case 'browse':
       case 'browse-produce':
+      case 'marketplace':
         return <BrowseProduce onOpenNegotiation={() => setIsNegotiationOpen(true)} />;
 
       case 'my-requests':
       case 'requests':
+      case 'procurement':
         return <DemandRequestsList onOpenCreateRequest={() => setIsCreateDemandOpen(true)} />;
 
       case 'matching':
@@ -98,6 +117,7 @@ const MainLayout: React.FC = () => {
         return <BuyerOrders onOpenInspection={() => setIsInspectionOpen(true)} />;
 
       case 'listings':
+      case 'produce':
         return <FarmerListings onOpenCreateListing={() => setIsCreateListingOpen(true)} />;
 
       case 'requests-feed':
@@ -124,6 +144,7 @@ const MainLayout: React.FC = () => {
       case 'admin-escrow':
         return <EscrowVault />;
 
+      case 'reports':
       case 'admin-analytics':
       case 'admin-data':
         return <AdminAnalytics />;
@@ -133,9 +154,11 @@ const MainLayout: React.FC = () => {
         return <AdminUserDirectory />;
 
       case 'messages':
+      case 'chat':
         return <MessagesView />;
 
       case 'market-intel':
+      case 'market-prices':
         return <MarketIntelView />;
 
       case 'wallet':
@@ -148,7 +171,10 @@ const MainLayout: React.FC = () => {
         return <KYCVerificationView />;
 
       case 'profile':
+      case 'trust-profile':
       case 'trust-score':
+      case 'settings':
+      case 'account-settings':
         return <ProfileView />;
 
       case 'contracts':
@@ -161,6 +187,7 @@ const MainLayout: React.FC = () => {
         return <Phase2FeaturesView />;
 
       case 'auth':
+      case 'client-portals':
       case 'login':
       case 'signup':
       case 'exit':
@@ -178,14 +205,18 @@ const MainLayout: React.FC = () => {
         isMobileSidebarOpen={isSidebarOpen}
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Desktop & Mobile Responsive Sidebar */}
-        <div className={`${isSidebarOpen ? 'block' : 'hidden'} lg:block shrink-0 z-20`}>
-          <Sidebar onCloseMobile={() => setIsSidebarOpen(false)} />
-        </div>
+      <div className="flex-1 flex w-full relative">
+        {/* Global Unified Sidebar: 272px sticky desktop, clean drawer on mobile */}
+        <Sidebar
+          isOpenMobile={isSidebarOpen}
+          onCloseMobile={() => setIsSidebarOpen(false)}
+        />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
-          {renderActiveView()}
+        {/* Global Main Content Area: Automatically adapts to remaining width */}
+        <main className="flex-1 min-w-0 p-6 lg:p-8 w-full">
+          <div className="w-full max-w-7xl">
+            {renderActiveView()}
+          </div>
         </main>
       </div>
 
@@ -222,11 +253,45 @@ const MainLayout: React.FC = () => {
       <NegotiationModal
         isOpen={isNegotiationOpen}
         onClose={() => setIsNegotiationOpen(false)}
+        listing={targetListing}
       />
 
       <QualityInspectionModal
         isOpen={isInspectionOpen}
         onClose={() => setIsInspectionOpen(false)}
+        order={targetOrder}
+      />
+
+      {/* FarmPot Assistant Floating Launcher & Conversational Interface */}
+      <AssistantLauncherButton
+        isOpen={isAssistantOpen}
+        onClick={() => setIsAssistantOpen(true)}
+      />
+
+      <FarmPotAssistantDrawer
+        isOpen={isAssistantOpen}
+        onClose={() => setIsAssistantOpen(false)}
+        onOpenCreateDemand={() => setIsCreateDemandOpen(true)}
+        onOpenCreateListing={() => setIsCreateListingOpen(true)}
+        onOpenNegotiation={(listing) => {
+          if (listing) setSelectedListingId(listing.id);
+          setIsNegotiationOpen(true);
+        }}
+        onOpenInspection={(order) => {
+          if (order) setSelectedOrderId(order.id);
+          setIsInspectionOpen(true);
+        }}
+      />
+
+      <BuyerTypeOnboardingModal
+        isOpen={
+          Boolean(
+            (currentRole === 'BUYER' || currentUser?.role === 'BUYER') &&
+            (currentUser?.buyerClassificationCompleted === false || isBuyerTypeModalOpen)
+          )
+        }
+        onClose={() => setIsBuyerTypeModalOpen(false)}
+        mode={currentUser?.buyerClassificationCompleted === false ? 'onboarding' : 'edit'}
       />
 
       <NotificationDrawer

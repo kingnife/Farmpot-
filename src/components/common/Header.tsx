@@ -22,7 +22,8 @@ import {
   FileText,
   Sparkles,
   Clock,
-  Check
+  Check,
+  Bot
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { TrustScoreBadge } from './TrustScoreBadge';
@@ -46,6 +47,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
     setCurrentUserById,
     openAuth,
     logoutToExitPage,
+    setIsAssistantOpen,
   } = useApp();
 
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -65,8 +67,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-30 bg-white border-b border-stone-200/90 shadow-xs">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-4">
             {/* Left: Mobile Toggle & Sleek Logo */}
             <div className="flex items-center gap-6">
@@ -274,6 +276,19 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
               >
                 <PlayCircle className="w-3.5 h-3.5" />
                 <span>Tour</span>
+              </button>
+
+              {/* FarmPot Assistant Button */}
+              <button
+                type="button"
+                id="header-assistant-button"
+                onClick={() => setIsAssistantOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#EDFFE0] hover:bg-[#EDFFE0]/80 text-[#334E1B] border border-[#BEE7A5] rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+                title="Open FarmPot Assistant (Product discovery, orders & support)"
+              >
+                <Bot className="w-3.5 h-3.5 text-[#334E1B]" />
+                <span className="hidden sm:inline">Assistant</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               </button>
 
               {/* Wallet / Escrow Quick Stat */}

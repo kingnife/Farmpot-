@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { getViewKeyFromPath, getPathFromViewKey } from '../utils/navigationRoutes';
 import {
   User,
   UserRole,
@@ -146,6 +147,13 @@ interface AppContextType {
   unreadNotificationsCount: number;
   isNotificationDrawerOpen: boolean;
   setIsNotificationDrawerOpen: (open: boolean) => void;
+  isBuyerTypeModalOpen: boolean;
+  setIsBuyerTypeModalOpen: (open: boolean) => void;
+
+  // FarmPot Assistant
+  isAssistantOpen: boolean;
+  setIsAssistantOpen: (open: boolean) => void;
+  openAssistant: (initialQuery?: string) => void;
 
   // Market & BI Data
   marketPrices: MarketCommodityPrice[];
@@ -194,11 +202,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return saved ? JSON.parse(saved) : INITIAL_USERS;
   });
 
-  const [currentUserId, setCurrentUserId] = useState<string>('usr-buyer-1');
+  const [currentUserId, setCurrentUserId] = useState<string>(() => {
+    const savedId = localStorage.getItem('farmpot_current_user_id');
+    return savedId || 'usr-buyer-1';
+  });
 
   const [listings, setListings] = useState<Listing[]>(() => {
     const saved = localStorage.getItem('farmpot_listings');
-    return saved ? JSON.parse(saved) : INITIAL_LISTINGS;
+    if (!saved) return INITIAL_LISTINGS;
+    try {
+      const parsed: Listing[] = JSON.parse(saved);
+      const existingIds = new Set(parsed.map(p => p.id));
+      const missing = INITIAL_LISTINGS.filter(i => !existingIds.has(i.id));
+      return [...parsed, ...missing];
+    } catch {
+      return INITIAL_LISTINGS;
+    }
   });
 
   const [demandRequests, setDemandRequests] = useState<DemandRequest[]>(() => {
@@ -235,12 +254,57 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [recurringSchedules, setRecurringSchedules] = useState<RecurringProcurementSchedule[]>(INITIAL_RECURRING_SCHEDULES);
   const [aggregationBatches] = useState<AggregatedOrderBatch[]>(INITIAL_AGGREGATION_BATCHES);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [isBuyerTypeModalOpen, setIsBuyerTypeModalOpen] = useState(false);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+
+  const openAssistant = (_initialQuery?: string) => {
+    setIsAssistantOpen(true);
+  };
 
   const [disputes, setDisputes] = useState<DisputeRecord[]>([]);
   const [ratings, setRatings] = useState<RatingRecord[]>([]);
 
-  // Navigation State
-  const [activeView, setActiveView] = useState<string>('dashboard');
+  // Navigation State with URL synchronization
+  const [activeView, setActiveViewState] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const pathOrHash = window.location.pathname !== '/' && window.location.pathname !== ''
+        ? window.location.pathname
+        : window.location.hash;
+      if (pathOrHash) {
+        return getViewKeyFromPath(pathOrHash);
+      }
+    }
+    return 'dashboard';
+  });
+
+  const setActiveView = useCallback((viewKey: string) => {
+    setActiveViewState(viewKey);
+    if (typeof window !== 'undefined') {
+      const canonicalPath = getPathFromViewKey(viewKey);
+      if (window.location.pathname !== canonicalPath) {
+        try {
+          window.history.pushState({ viewKey }, '', canonicalPath);
+        } catch {
+          window.location.hash = canonicalPath;
+        }
+      }
+    }
+  }, []);
+
+  // Listen for browser navigation (Back / Forward)
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window !== 'undefined') {
+        const pathOrHash = window.location.pathname !== '/' && window.location.pathname !== ''
+          ? window.location.pathname
+          : window.location.hash;
+        const key = getViewKeyFromPath(pathOrHash);
+        setActiveViewState(key);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>('FP-10245');
   const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
@@ -269,6 +333,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem('farmpot_users', JSON.stringify(users));
   }, [users]);
+
+  useEffect(() => {
+    localStorage.setItem('farmpot_current_user_id', currentUserId);
+  }, [currentUserId]);
 
   useEffect(() => {
     localStorage.setItem('farmpot_listings', JSON.stringify(listings));
@@ -364,6 +432,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       walletBalance: 0,
       escrowBalance: 0,
       joinedAt: new Date().toISOString(),
+      ...userData,
     };
     setUsers(prev => [...prev, newUser]);
     setCurrentUserId(newUser.id);
@@ -1801,6 +1870,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         unreadNotificationsCount,
         isNotificationDrawerOpen,
         setIsNotificationDrawerOpen,
+        isBuyerTypeModalOpen,
+        setIsBuyerTypeModalOpen,
+        isAssistantOpen,
+        setIsAssistantOpen,
+        openAssistant,
         marketPrices,
         recurringSchedules,
         toggleRecurringSchedule,
