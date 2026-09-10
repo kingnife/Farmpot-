@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
+import { useDropdownPositioning } from '../../hooks/useDropdownPositioning';
 
 export interface DropdownOption {
   value: string;
@@ -27,6 +28,7 @@ export interface DropdownProps {
   onOpenChange?: (open: boolean) => void;
   minWidth?: string;
   fullWidth?: boolean;
+  zIndex?: number;
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -47,9 +49,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
   onOpenChange,
   minWidth,
   fullWidth,
+  zIndex = 100,
 }) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -68,6 +72,16 @@ export const Dropdown: React.FC<DropdownProps> = ({
   }, [isControlled, onOpenChange]);
 
   const uniqueId = id || `fp-dropdown-${Math.random().toString(36).substring(2, 9)}`;
+
+  // Viewport bounds detection and auto-repositioning via useDropdownPositioning hook
+  const placement = useDropdownPositioning({
+    triggerRef: buttonRef,
+    containerRef,
+    menuRef,
+    isOpen,
+    preferredHorizontal: align === 'right' ? 'right' : 'left',
+    targetWidth: isFullWidth ? 'match-trigger' : undefined,
+  });
 
   // Close when another dropdown opens
   useEffect(() => {
@@ -186,7 +200,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
     <div
       ref={containerRef}
       id={`${uniqueId}-wrapper`}
-      className={`relative ${isFullWidth ? 'block w-full' : 'inline-block'} text-left ${className}`}
+      className={`relative ${isOpen ? 'z-dropdown-wrapper z-[90]' : 'z-auto'} ${isFullWidth ? 'block w-full' : 'inline-block'} text-left ${className}`}
+      style={isOpen ? { zIndex: Math.max(90, zIndex - 5) } : undefined}
     >
       {label && (
         <label
@@ -257,17 +272,35 @@ export const Dropdown: React.FC<DropdownProps> = ({
           id={`${uniqueId}-menu`}
           role={options ? 'listbox' : 'menu'}
           aria-labelledby={uniqueId}
-          className={`absolute z-50 mt-1.5 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex flex-col max-w-[calc(100vw-2rem)] animate-in fade-in zoom-in-95 duration-100 ${
-            align === 'right' ? 'right-0' : 'left-0'
+          className={`absolute bg-white rounded-2xl border border-slate-200/90 shadow-2xl overflow-hidden flex flex-col duration-100 z-dropdown z-[100] ${
+            placement.vertical === 'top'
+              ? 'bottom-full mb-1.5 animate-in fade-in zoom-in-95 slide-in-from-bottom-1'
+              : 'top-full mt-1.5 animate-in fade-in zoom-in-95 slide-in-from-top-1'
+          } ${
+            placement.horizontal === 'right' ? 'right-0' : 'left-0'
           } ${isFullWidth && !menuClassName.includes('w-') ? 'w-full' : ''} ${menuClassName}`}
-          style={minWidth ? { minWidth } : isFullWidth ? { minWidth: '100%' } : { minWidth: '10rem' }}
+          style={{
+            minWidth: minWidth ? minWidth : isFullWidth ? '100%' : '10rem',
+            maxHeight: `${placement.maxHeight}px`,
+            maxWidth: `${placement.maxWidth}px`,
+            transform: placement.shiftX ? `translateX(${placement.shiftX}px)` : undefined,
+            zIndex,
+          }}
         >
           {children ? (
-            typeof children === 'function'
-              ? children({ close: () => setIsOpen(false), isOpen })
-              : children
+            <div
+              className="overflow-y-auto flex-1 overscroll-contain"
+              style={{ maxHeight: `${placement.maxHeight}px` }}
+            >
+              {typeof children === 'function'
+                ? children({ close: () => setIsOpen(false), isOpen })
+                : children}
+            </div>
           ) : options && options.length > 0 ? (
-            <div className="py-1.5 max-h-60 overflow-y-auto divide-y divide-slate-50 flex-1 overscroll-contain">
+            <div
+              className="py-1.5 overflow-y-auto divide-y divide-slate-50 flex-1 overscroll-contain"
+              style={{ maxHeight: `${Math.max(100, placement.maxHeight - 8)}px` }}
+            >
               {options.map((opt, index) => {
                 const isSelected =
                   opt.value === value ||

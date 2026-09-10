@@ -249,8 +249,16 @@ export const FarmPotAssistantDrawer: React.FC<FarmPotAssistantDrawerProps> = ({
   }
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[440px] max-w-[460px] h-[640px] max-h-[calc(100vh-4rem)] flex flex-col bg-[#FAFAF8] rounded-2xl shadow-2xl border border-stone-200/90 overflow-hidden text-[#1F1F1F] font-sans antialiased animate-in fade-in slide-in-from-bottom-3 duration-200">
-      {/* Header */}
+    <>
+      {/* Mobile Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/40 z-40 sm:hidden backdrop-blur-2xs transition-opacity duration-200"
+        onClick={onClose}
+        aria-label="Close assistant overlay"
+      />
+
+      <div className="fixed inset-x-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-50 w-full sm:w-[440px] max-w-full sm:max-w-[460px] h-[85vh] sm:h-[640px] sm:max-h-[calc(100vh-4rem)] flex flex-col bg-[#FAFAF8] rounded-t-2xl sm:rounded-2xl shadow-2xl border-t sm:border border-stone-200/90 overflow-hidden text-[#1F1F1F] font-sans antialiased animate-in fade-in slide-in-from-bottom-3 duration-200">
+        {/* Header */}
       <div className="bg-[#334E1B] text-white px-4 py-3 sm:px-5 flex items-center justify-between border-b border-[#3F6B24] shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="relative">
@@ -474,5 +482,6 @@ export const FarmPotAssistantDrawer: React.FC<FarmPotAssistantDrawerProps> = ({
         </div>
       </div>
     </div>
-  );
+  </>
+);
 };

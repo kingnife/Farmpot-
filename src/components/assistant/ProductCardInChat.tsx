@@ -24,16 +24,16 @@ export const ProductCardInChat: React.FC<ProductCardInChatProps> = ({
 
   return (
     <div className="bg-white border border-stone-200/90 rounded-xl overflow-hidden shadow-xs hover:border-[#334E1B]/50 transition-all text-left">
-      <div className="flex flex-col sm:flex-row gap-3 p-3">
+      <div className="flex flex-row gap-2.5 sm:gap-3 p-2.5 sm:p-3">
         {/* Product Image */}
-        <div className="relative w-full sm:w-28 h-28 shrink-0 rounded-lg overflow-hidden bg-stone-100 border border-stone-200/60">
+        <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-lg overflow-hidden bg-stone-100 border border-stone-200/60">
           <img
             src={photo}
             alt={listing.product}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
-          <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#334E1B] text-white shadow-xs">
+          <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-[#334E1B] text-white shadow-xs">
             {listing.qualityGrade.replace('_', ' ')}
           </span>
         </div>

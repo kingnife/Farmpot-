@@ -67,15 +67,15 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-white border-b border-stone-200/90 shadow-xs">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-4">
+      <header className="sticky top-0 z-30 bg-white border-b border-stone-200/90 shadow-xs w-full max-w-full">
+        <div className="w-full px-3 sm:px-4 lg:px-6">
+          <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
             {/* Left: Mobile Toggle & Sleek Logo */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
               <button
                 type="button"
                 onClick={onToggleMobileSidebar}
-                className="lg:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
+                className="lg:hidden p-1.5 sm:p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer shrink-0"
                 aria-label="Toggle menu"
               >
                 {isMobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -83,21 +83,21 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
 
               <div
                 onClick={() => setActiveView('dashboard')}
-                className="flex items-center gap-3 cursor-pointer select-none group"
+                className="flex items-center gap-2 sm:gap-2.5 cursor-pointer select-none group shrink-0"
               >
-                <div className="w-8 h-8 bg-[#334E1B] rounded-lg flex items-center justify-center text-white font-bold text-base shadow-sm group-hover:bg-[#3F6B24] transition-colors">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#334E1B] rounded-lg flex items-center justify-center text-white font-bold text-sm sm:text-base shadow-xs group-hover:bg-[#3F6B24] transition-colors shrink-0">
                   F
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xl font-bold tracking-tight text-[#334E1B]">FarmPot</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#334E1B] bg-[#EDFFE0] px-1.5 py-0.5 rounded border border-[#BEE7A5]">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-base sm:text-xl font-bold tracking-tight text-[#334E1B]">FarmPot</span>
+                  <span className="hidden sm:inline-flex items-center text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#334E1B] bg-[#EDFFE0] px-1.5 py-0.5 rounded border border-[#BEE7A5] whitespace-nowrap select-none">
                     Nigeria 🇳🇬
                   </span>
                 </div>
               </div>
 
-              {/* Quick Navigation Tabs */}
-              <div className="hidden xl:flex items-center gap-6 text-sm font-medium text-[#777777]">
+              {/* Quick Navigation Tabs (Renders only on ultra-wide screens to prevent desktop overflow) */}
+              <div className="hidden 2xl:flex items-center gap-5 text-sm font-medium text-[#777777] ml-2">
                 <button
                   type="button"
                   onClick={() => setActiveView('dashboard')}
@@ -253,17 +253,17 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
             </div>
 
             {/* Right: Quick Stats, Role Selector & Profile */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0">
               {/* Dedicated Client Auth Suite Portal Button */}
               <button
                 type="button"
                 id="header-client-auth-portals-button"
                 onClick={() => openAuth()}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#334E1B] hover:bg-[#3F6B24] text-white rounded-lg text-xs font-bold shadow-xs transition-colors cursor-pointer"
+                className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 bg-[#334E1B] hover:bg-[#3F6B24] text-white rounded-lg text-xs font-bold shadow-xs transition-colors cursor-pointer"
                 title="Open Dedicated Client Auth & Exit Pages (Buyers, Farmers, Transporters, Admin)"
               >
                 <KeyRound className="w-3.5 h-3.5 text-[#EDFFE0]" />
-                <span className="hidden sm:inline">Client Portals</span>
+                <span>Client Portals</span>
               </button>
 
               {/* Transaction Tour Button */}
@@ -271,7 +271,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
                 type="button"
                 id="header-start-tour-button"
                 onClick={startTour}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-white border-1.5 border-[#334E1B] hover:bg-[#EDFFE0] text-[#334E1B] rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 bg-white border-1.5 border-[#334E1B] hover:bg-[#EDFFE0] text-[#334E1B] rounded-lg text-xs font-bold transition-colors cursor-pointer"
                 title="Launch the End-to-End Nigerian Agricultural Trade Walkthrough"
               >
                 <PlayCircle className="w-3.5 h-3.5" />
@@ -283,18 +283,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
                 type="button"
                 id="header-assistant-button"
                 onClick={() => setIsAssistantOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#EDFFE0] hover:bg-[#EDFFE0]/80 text-[#334E1B] border border-[#BEE7A5] rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+                className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 bg-[#EDFFE0] hover:bg-[#EDFFE0]/80 text-[#334E1B] border border-[#BEE7A5] rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-2xs"
                 title="Open FarmPot Assistant (Product discovery, orders & support)"
               >
                 <Bot className="w-3.5 h-3.5 text-[#334E1B]" />
-                <span className="hidden sm:inline">Assistant</span>
+                <span>Assistant</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               </button>
 
               {/* Wallet / Escrow Quick Stat */}
               <div
                 onClick={() => setActiveView('payments')}
-                className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#D8D8CF] bg-[#EDFFE0]/40 hover:bg-[#EDFFE0]/80 transition-colors cursor-pointer"
+                className="hidden xl:flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-[#D8D8CF] bg-[#EDFFE0]/40 hover:bg-[#EDFFE0]/80 transition-colors cursor-pointer"
                 title="Open FarmPot Escrow & Wallet Vault"
               >
                 <div className="w-5 h-5 rounded bg-[#EDFFE0] flex items-center justify-center text-[#334E1B]">
@@ -308,7 +308,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
                 </div>
 
                 {(currentUser.escrowBalance || 0) > 0 && (
-                  <div className="ml-2 pl-2 border-l border-[#D8D8CF] flex items-center gap-1 text-[11px] font-semibold text-[#334E1B]">
+                  <div className="ml-1.5 pl-1.5 border-l border-[#D8D8CF] flex items-center gap-1 text-[11px] font-semibold text-[#334E1B]">
                     <Lock className="w-3 h-3 text-[#334E1B]" />
                     <span>₦{(currentUser.escrowBalance || 0).toLocaleString()} Held</span>
                   </div>
@@ -320,12 +320,12 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
                 type="button"
                 id="header-notifications-button"
                 onClick={() => setIsNotifOpen(true)}
-                className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 relative transition-colors cursor-pointer"
+                className="p-1.5 sm:p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 relative transition-colors cursor-pointer shrink-0"
                 aria-label="View notifications"
               >
                 <Bell className="w-4 h-4" />
                 {unreadNotificationsCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#334E1B] text-white rounded-full text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
+                  <span className="absolute -top-0.5 -right-0.5 sm:top-1 sm:right-1 w-4 h-4 bg-[#334E1B] text-white rounded-full text-[9px] font-bold flex items-center justify-center ring-2 ring-white">
                     {unreadNotificationsCount}
                   </span>
                 )}
@@ -347,7 +347,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isMobileS
                 type="button"
                 id="header-logout-button"
                 onClick={() => logoutToExitPage()}
-                className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                className="p-1.5 sm:p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
                 title="Exit Session & Sign Out"
                 aria-label="Logout"
               >

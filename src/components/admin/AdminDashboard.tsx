@@ -60,11 +60,11 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
           <button
             type="button"
             onClick={() => setActiveView('admin-analytics')}
-            className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs shadow-md shadow-purple-950/40 cursor-pointer flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs shadow-md shadow-purple-950/40 cursor-pointer flex items-center justify-center gap-1.5 transition-colors w-full sm:w-auto min-h-[42px] sm:min-h-0"
           >
             <PieChart className="w-4 h-4" />
             <span>Transaction & Data Hub</span>
@@ -73,7 +73,7 @@ export const AdminDashboard: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveView('admin-users')}
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded-xl text-xs cursor-pointer flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5 transition-colors w-full sm:w-auto min-h-[42px] sm:min-h-0"
           >
             <Users className="w-4 h-4 text-emerald-400" />
             <span>User Directory ({users.length})</span>

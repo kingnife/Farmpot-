@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   ChevronDown,
   ChevronRight,
@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { User as AppUser } from '../../types';
+import { useDropdownPositioning } from '../../hooks/useDropdownPositioning';
 
 interface ClientProfileDropdownProps {
   currentUser: AppUser;
@@ -37,14 +38,17 @@ export const ClientProfileDropdown: React.FC<ClientProfileDropdownProps> = ({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const [position, setPosition] = useState<{
-    left: number;
-    width: number;
-    arrowLeft: number;
-  }>({
-    left: 0,
-    width: 410,
-    arrowLeft: 205,
+  // Position detection and boundary clamping using useDropdownPositioning hook
+  const position = useDropdownPositioning({
+    triggerRef,
+    containerRef,
+    menuRef,
+    isOpen,
+    preferredHorizontal: 'center',
+    margin: 12,
+    offsetY: 10,
+    targetWidth: 410,
+    maxAllowedHeight: 650,
   });
 
   const getInitials = (name?: string) => {
@@ -55,63 +59,6 @@ export const ClientProfileDropdown: React.FC<ClientProfileDropdownProps> = ({
     }
     return name.slice(0, 2).toUpperCase();
   };
-
-  const updatePosition = useCallback(() => {
-    if (!triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-
-    // Desired dropdown width: comfortably display menu labels without wrapping
-    const targetWidth = Math.min(410, viewportWidth - 24);
-
-    // Trigger center on screen
-    const triggerCenterScreen = rect.left + rect.width / 2;
-
-    // Ideal left on screen to align horizontal centers
-    let idealLeftScreen = triggerCenterScreen - targetWidth / 2;
-
-    // Boundary constraints: ensure dropdown never extends outside viewport
-    const minScreenMargin = 12;
-    if (idealLeftScreen + targetWidth > viewportWidth - minScreenMargin) {
-      idealLeftScreen = viewportWidth - minScreenMargin - targetWidth;
-    }
-    if (idealLeftScreen < minScreenMargin) {
-      idealLeftScreen = minScreenMargin;
-    }
-
-    // Convert screen coordinate to offset relative to the trigger container
-    const relativeLeft = idealLeftScreen - rect.left;
-
-    // Calculate upward arrow position so it always points directly to the trigger center
-    const calculatedArrow = Math.max(
-      24,
-      Math.min(targetWidth - 24, triggerCenterScreen - idealLeftScreen)
-    );
-
-    setPosition({
-      left: relativeLeft,
-      width: targetWidth,
-      arrowLeft: calculatedArrow,
-    });
-  }, []);
-
-  // Recalculate position when open or on resize/scroll
-  useEffect(() => {
-    if (!isOpen) return;
-    updatePosition();
-
-    const handleResizeOrScroll = () => {
-      updatePosition();
-    };
-
-    window.addEventListener('resize', handleResizeOrScroll);
-    window.addEventListener('scroll', handleResizeOrScroll, true);
-
-    return () => {
-      window.removeEventListener('resize', handleResizeOrScroll);
-      window.removeEventListener('scroll', handleResizeOrScroll, true);
-    };
-  }, [isOpen, updatePosition]);
 
   // Click outside and escape key handling
   useEffect(() => {
@@ -169,7 +116,11 @@ export const ClientProfileDropdown: React.FC<ClientProfileDropdownProps> = ({
   ];
 
   return (
-    <div ref={containerRef} className="relative inline-block text-left">
+    <div
+      ref={containerRef}
+      id="header-client-profile-dropdown"
+      className={`relative inline-block text-left ${isOpen ? 'z-dropdown-elevated-wrapper z-dropdown-wrapper z-[110]' : 'z-auto'}`}
+    >
       {/* 1. Client selector / dropdown trigger */}
       <button
         type="button"
@@ -179,30 +130,33 @@ export const ClientProfileDropdown: React.FC<ClientProfileDropdownProps> = ({
         aria-expanded={isOpen}
         aria-haspopup="menu"
         aria-controls="header-client-profile-dropdown-panel"
-        className={`flex items-center gap-2.5 sm:gap-3 px-3 py-2 sm:px-3.5 sm:py-2 rounded-2xl transition-all duration-150 cursor-pointer border select-none ${
+        className={`flex items-center gap-1.5 sm:gap-2.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl transition-all duration-150 cursor-pointer border select-none h-9 sm:h-11 ${
           isOpen
             ? 'bg-[#F2FAEE] border-[#334E1B]/35 ring-2 ring-[#334E1B]/15 shadow-xs'
             : 'bg-white hover:bg-slate-50/90 border-slate-200/90 hover:border-slate-300 shadow-xs'
         }`}
       >
         {/* [ Company information ] */}
-        <div className="flex flex-col items-end text-right min-w-0 max-w-[190px] sm:max-w-[260px] md:max-w-[320px]">
-          <span className="text-[10px] font-bold text-[#777777] uppercase tracking-wider leading-none mb-1">
+        <div className="hidden sm:flex flex-col items-end text-right min-w-0 max-w-[130px] md:max-w-[180px] lg:max-w-[240px] justify-center">
+          <span className="text-[10px] font-bold text-[#777777] uppercase tracking-wider leading-none whitespace-nowrap truncate max-w-full">
             {isAdmin ? 'ADMIN CLEARANCE' : `ROLE: ${currentUser.role}`}
           </span>
-          <span className="text-xs font-bold text-[#1F1F1F] leading-snug break-words">
+          <span
+            className="text-xs font-bold text-[#1F1F1F] leading-tight truncate whitespace-nowrap max-w-full mt-1"
+            title={currentUser.businessName || currentUser.name}
+          >
             {currentUser.businessName || currentUser.name}
           </span>
         </div>
 
         {/* [ LF Circular Logo ] */}
-        <div className="w-9 h-9 shrink-0 rounded-full border-2 border-[#BEE7A5] bg-[#EDFFE0] text-[#334E1B] flex items-center justify-center text-xs font-extrabold shadow-xs">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 rounded-full border border-[#BEE7A5] bg-[#EDFFE0] text-[#334E1B] flex items-center justify-center text-[10px] sm:text-xs font-extrabold shadow-2xs">
           {getInitials(currentUser.businessName || currentUser.name)}
         </div>
 
         {/* [ Down-chevron with smooth rotation ] */}
         <ChevronDown
-          className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ease-out ${
+          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ease-out ${
             isOpen ? 'rotate-180 text-[#334E1B]' : ''
           }`}
         />
@@ -215,16 +169,25 @@ export const ClientProfileDropdown: React.FC<ClientProfileDropdownProps> = ({
           id="header-client-profile-dropdown-panel"
           role="menu"
           aria-label="Client Profile Menu"
-          className="absolute top-full mt-2.5 z-50 animate-in fade-in zoom-in-95 slide-in-from-top-1 duration-150 ease-out"
+          className={`absolute z-dropdown-elevated z-dropdown z-[120] duration-150 ease-out ${
+            position.vertical === 'top'
+              ? 'bottom-full mb-2.5 animate-in fade-in zoom-in-95 slide-in-from-bottom-1'
+              : 'top-full mt-2.5 animate-in fade-in zoom-in-95 slide-in-from-top-1'
+          }`}
           style={{
             left: `${position.left}px`,
             width: `${position.width}px`,
+            maxHeight: `${position.maxHeight}px`,
           }}
         >
           {/* Visual Connection Arrow pointing to the selector */}
           <div
             aria-hidden="true"
-            className="absolute -top-[7px] w-3.5 h-3.5 bg-[#F2FAEE] border-t border-l border-[#BEE7A5] rotate-45 z-30"
+            className={`absolute w-3.5 h-3.5 bg-[#F2FAEE] z-30 ${
+              position.vertical === 'top'
+                ? '-bottom-[7px] border-b border-r border-[#BEE7A5]'
+                : '-top-[7px] border-t border-l border-[#BEE7A5]'
+            }`}
             style={{
               left: `${position.arrowLeft}px`,
               transform: 'translateX(-50%) rotate(45deg)',
@@ -232,7 +195,10 @@ export const ClientProfileDropdown: React.FC<ClientProfileDropdownProps> = ({
           />
 
           {/* Clean Floating Panel Container */}
-          <div className="relative z-20 bg-white rounded-[22px] border border-[#BEE7A5]/70 shadow-[0_12px_36px_rgba(0,0,0,0.08),0_4px_16px_rgba(51,78,27,0.06)] overflow-hidden">
+          <div
+            className="relative z-20 bg-white rounded-[22px] border border-[#BEE7A5]/70 shadow-[0_12px_36px_rgba(0,0,0,0.08),0_4px_16px_rgba(51,78,27,0.06)] overflow-hidden overflow-y-auto overscroll-contain"
+            style={{ maxHeight: `${position.maxHeight}px` }}
+          >
             {isAdmin ? (
               /* Admin Clearance Menu Layout */
               <>

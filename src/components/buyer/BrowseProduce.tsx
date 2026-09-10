@@ -98,37 +98,41 @@ export const BrowseProduce: React.FC<BrowseProduceProps> = ({ onOpenNegotiation 
             />
           </div>
 
-          {/* State Filter */}
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:items-center gap-2.5">
+            {/* State Filter */}
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
+              <Dropdown
+                id="browse-produce-state-dropdown"
+                className="w-full md:w-auto flex-1"
+                menuClassName="max-h-56 w-52"
+                options={[
+                  { value: 'ALL', label: 'All Nigerian States' },
+                  ...nigerianStates.filter(s => s !== 'ALL').map(s => ({
+                    value: s,
+                    label: `${s} State`,
+                  })),
+                ]}
+                value={selectedState}
+                onChange={val => setSelectedState(val)}
+              />
+            </div>
+
+            {/* Grade Filter */}
             <Dropdown
-              id="browse-produce-state-dropdown"
-              menuClassName="max-h-56 w-52"
+              id="browse-produce-grade-dropdown"
+              className="w-full md:w-auto"
+              menuClassName="w-48"
               options={[
-                { value: 'ALL', label: 'All Nigerian States' },
-                ...nigerianStates.filter(s => s !== 'ALL').map(s => ({
-                  value: s,
-                  label: `${s} State`,
-                })),
+                { value: 'ALL', label: 'All Quality Grades' },
+                { value: 'GRADE_A', label: 'Grade A (Premium)' },
+                { value: 'GRADE_B', label: 'Grade B (Standard)' },
+                { value: 'EXPORT_PREMIUM', label: 'Export Premium' },
               ]}
-              value={selectedState}
-              onChange={val => setSelectedState(val)}
+              value={selectedGrade}
+              onChange={val => setSelectedGrade(val)}
             />
           </div>
-
-          {/* Grade Filter */}
-          <Dropdown
-            id="browse-produce-grade-dropdown"
-            menuClassName="w-48"
-            options={[
-              { value: 'ALL', label: 'All Quality Grades' },
-              { value: 'GRADE_A', label: 'Grade A (Premium)' },
-              { value: 'GRADE_B', label: 'Grade B (Standard)' },
-              { value: 'EXPORT_PREMIUM', label: 'Export Premium' },
-            ]}
-            value={selectedGrade}
-            onChange={val => setSelectedGrade(val)}
-          />
         </div>
 
         {/* Category Pills */}

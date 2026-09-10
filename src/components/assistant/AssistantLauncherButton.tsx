@@ -17,7 +17,7 @@ export const AssistantLauncherButton: React.FC<AssistantLauncherButtonProps> = (
       type="button"
       id="farmpot-assistant-floating-launcher"
       onClick={onClick}
-      className="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 px-4 py-3 bg-[#334E1B] hover:bg-[#3F6B24] text-white rounded-full shadow-lg hover:shadow-xl border border-[#3F6B24] transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 group flex items-center gap-2.5 p-3 sm:px-4 sm:py-2.5 bg-[#334E1B] hover:bg-[#3F6B24] text-white rounded-full shadow-lg hover:shadow-xl border border-[#3F6B24] transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
       title="Open FarmPot Assistant (Product discovery, orders, procurement & support)"
       aria-label="Open FarmPot Assistant"
     >

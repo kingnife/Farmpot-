@@ -48,25 +48,25 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onOpenCreateLi
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-emerald-950 via-emerald-900 to-amber-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-emerald-950 via-emerald-900 to-amber-950 rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/60 border border-emerald-500/40 text-emerald-200 text-xs font-semibold mb-3">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
             Verified Nigerian Outgrower • {currentUser.state} Agricultural Hub
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white">
             Sannu da zuwa, {currentUser.name}
           </h1>
           <p className="text-emerald-100/90 text-xs sm:text-sm mt-2 leading-relaxed">
             Manage your harvest inventory, negotiate with institutional industrial buyers, and receive guaranteed payouts straight to your Nigerian bank account through FarmPot Escrow.
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row gap-2.5 sm:gap-3">
             <button
               type="button"
               id="farmer-create-listing-btn"
               onClick={onOpenCreateListing}
-              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-emerald-950/30 transition-all cursor-pointer hover:scale-102 active:scale-98"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-emerald-950/30 transition-all cursor-pointer w-full sm:w-auto min-h-[42px] sm:min-h-0"
             >
               <PlusCircle className="w-4 h-4" />
               <span>List New Produce Batch</span>
@@ -75,7 +75,7 @@ export const FarmerDashboard: React.FC<FarmerDashboardProps> = ({ onOpenCreateLi
             <button
               type="button"
               onClick={() => setActiveView('requests-feed')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-xs border border-white/20 backdrop-blur-xs transition-all cursor-pointer"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-xs border border-white/20 backdrop-blur-xs transition-all cursor-pointer w-full sm:w-auto min-h-[42px] sm:min-h-0"
             >
               <Sparkles className="w-4 h-4" />
               <span>View Buyer Demand Requests ({(demandRequests || []).length})</span>

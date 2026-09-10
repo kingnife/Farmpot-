@@ -199,7 +199,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#EAEAE2] text-[#1F1F1F] flex flex-col font-sans antialiased selection:bg-[#334E1B] selection:text-white">
+    <div className="min-h-screen w-full max-w-full overflow-x-clip bg-[#EAEAE2] text-[#1F1F1F] flex flex-col font-sans antialiased selection:bg-[#334E1B] selection:text-white">
       <Header
         onToggleMobileSidebar={() => setIsSidebarOpen(prev => !prev)}
         isMobileSidebarOpen={isSidebarOpen}
@@ -212,16 +212,16 @@ const MainLayout: React.FC = () => {
           onCloseMobile={() => setIsSidebarOpen(false)}
         />
 
-        {/* Global Main Content Area: Automatically adapts to remaining width */}
-        <main className="flex-1 min-w-0 p-6 lg:p-8 w-full">
-          <div className="w-full max-w-7xl">
+        {/* Global Main Content Area: Automatically adapts to remaining width with responsive padding */}
+        <main className="flex-1 min-w-0 p-3.5 sm:p-6 lg:p-8 w-full overflow-x-hidden">
+          <div className="w-full max-w-7xl mx-auto">
             {renderActiveView()}
           </div>
         </main>
       </div>
 
       {/* Sleek Interface Footer */}
-      <footer className="px-6 sm:px-8 py-3 bg-[#334E1B] text-[#EDFFE0]/80 text-[10px] font-medium flex flex-wrap justify-between items-center uppercase tracking-widest border-t border-[#3F6B24] shrink-0 gap-2">
+      <footer className="px-4 sm:px-8 py-3 bg-[#334E1B] text-[#EDFFE0]/80 text-[10px] font-medium flex flex-wrap justify-between items-center uppercase tracking-widest border-t border-[#3F6B24] shrink-0 gap-2">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-[#EDFFE0] animate-pulse"></div>
           <span className="text-white font-semibold">© 2026 FarmPot Nigeria · Supply Chain Intelligence v2.1.0</span>

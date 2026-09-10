@@ -81,14 +81,14 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
       {/* ================================================================= */}
       {/* BUYER CATEGORY PERSONALIZATION BANNER                             */}
       {/* ================================================================= */}
-      <div className="bg-white rounded-2xl border border-stone-200 p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 bg-[#EDFFE0] border border-[#334E1B]/20">
+      <div className="bg-white rounded-2xl border border-stone-200 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+        <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 min-w-0 flex-1">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0 bg-[#EDFFE0] border border-[#334E1B]/20 mt-0.5 sm:mt-0">
             {buyerCategory === 'personal' ? '👤' : buyerCategory === 'business' ? '🏢' : '🏛️'}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#EDFFE0] text-[#334E1B] border border-[#334E1B]/30">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#EDFFE0] text-[#334E1B] border border-[#334E1B]/30 whitespace-nowrap">
                 {buyerCategory === 'personal'
                   ? 'Personal Buyer'
                   : buyerCategory === 'business'
@@ -99,14 +99,14 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                 · Customized FarmPot Experience
               </span>
             </div>
-            <h1 className="text-base sm:text-lg font-extrabold text-[#1F1F1F] mt-0.5">
+            <h1 className="text-base sm:text-lg font-extrabold text-[#1F1F1F] mt-1 leading-snug break-words">
               {buyerCategory === 'personal'
                 ? `Welcome back, ${currentUser.name} · Household Produce Hub`
                 : buyerCategory === 'business'
                 ? `${currentUser.businessName || 'Lagos Fresh Processing'} · Commercial Sourcing Portal`
                 : `${currentUser.organizationName || currentUser.businessName || 'Institutional Healthcare'} · Bulk Procurement`}
             </h1>
-            <p className="text-xs text-[#555555]">
+            <p className="text-xs text-[#555555] mt-1 leading-relaxed">
               {buyerCategory === 'personal'
                 ? 'Prioritizing simple product discovery, individual pack sizes (kg, baskets, tubers), and swift doorstep delivery.'
                 : buyerCategory === 'business'
@@ -116,12 +116,12 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 w-full md:w-auto shrink-0 pt-2 md:pt-0 border-t border-slate-100 md:border-t-0">
           <button
             type="button"
             id="buyer-dashboard-change-classification-btn"
             onClick={() => setIsBuyerTypeModalOpen(true)}
-            className="px-3.5 py-2 rounded-xl border border-[#334E1B]/40 hover:bg-[#EDFFE0]/50 text-[#334E1B] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl border border-[#334E1B]/40 hover:bg-[#EDFFE0]/50 text-[#334E1B] text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer touch-manipulation min-h-[42px] sm:min-h-0"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span>Change Buyer Type</span>
@@ -129,7 +129,7 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
           <button
             type="button"
             onClick={onOpenCreateRequest}
-            className="px-3.5 py-2 rounded-xl bg-[#334E1B] hover:bg-[#3F6B24] text-white text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl bg-[#334E1B] hover:bg-[#3F6B24] text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer touch-manipulation min-h-[42px] sm:min-h-0 whitespace-nowrap"
           >
             <PlusCircle className="w-3.5 h-3.5" />
             <span>{buyerCategory === 'personal' ? 'Custom Produce Request' : 'New Procurement Request'}</span>
@@ -387,7 +387,7 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={() => {
@@ -478,13 +478,13 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                   <div
                     key={item.id}
                     onClick={() => setActiveView('matching')}
-                    className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-[#334E1B] transition-colors cursor-pointer"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 bg-white border border-slate-200 rounded-xl hover:border-[#334E1B] transition-colors cursor-pointer gap-3"
                   >
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 bg-[#EDFFE0] text-[#334E1B] border border-[#BEE7A5]">
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 bg-[#EDFFE0] text-[#334E1B] border border-[#BEE7A5]">
                         {getInitials(item.farmerName || 'Supplier')}
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="font-bold text-slate-800 text-sm truncate">
                           {item.farmerName}, {supplierState}
                         </p>
@@ -494,11 +494,11 @@ export const BuyerDashboard: React.FC<BuyerDashboardProps> = ({ onOpenCreateRequ
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-end gap-1 shrink-0">
+                    <div className="flex items-center sm:items-end justify-between sm:justify-center sm:flex-col gap-1 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                       <span className="text-sm font-bold text-slate-900 font-mono">
                         {displayPrice}
                       </span>
-                      <div className="px-2 py-0.5 bg-[#EDFFE0] text-[#334E1B] border border-[#BEE7A5] text-[10px] font-bold rounded uppercase">
+                      <div className="px-2 py-0.5 bg-[#EDFFE0] text-[#334E1B] border border-[#BEE7A5] text-[10px] font-bold rounded uppercase whitespace-nowrap">
                         Verified Trust {trustScores[idx] || 90}
                       </div>
                     </div>

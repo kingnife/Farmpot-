@@ -31,25 +31,25 @@ export const TransporterDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-emerald-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-emerald-950 rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-800/60 border border-blue-500/40 text-blue-200 text-xs font-semibold mb-3">
             <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
             Verified Cold-Chain Carrier • GIT Insured Fleet
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white">
             Welcome, {currentUser.name}
           </h1>
           <p className="text-blue-100/90 text-xs sm:text-sm mt-2 leading-relaxed">
             Dispatch your refrigerated trucks across Nigerian agricultural corridors, maintain digital waybills, and receive guaranteed logistics freight payouts upon delivery.
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row gap-2.5 sm:gap-3">
             <button
               type="button"
               id="transporter-available-jobs-btn"
               onClick={() => setActiveView('available-jobs')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-blue-950/30 transition-all cursor-pointer hover:scale-102"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-blue-950/30 transition-all cursor-pointer w-full sm:w-auto min-h-[42px] sm:min-h-0"
             >
               <Truck className="w-4 h-4" />
               <span>Available Freight Jobs ({availableJobs.length + 1})</span>
@@ -58,7 +58,7 @@ export const TransporterDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveView('active-delivery')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-xs border border-white/20 backdrop-blur-xs transition-all cursor-pointer"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-xs border border-white/20 backdrop-blur-xs transition-all cursor-pointer w-full sm:w-auto min-h-[42px] sm:min-h-0"
             >
               <PackageCheck className="w-4 h-4" />
               <span>Active Waybills ({assignedOrders.length})</span>
